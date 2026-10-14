@@ -1,0 +1,27 @@
+{
+  "title": "No one failed. The process failed.",
+  "subtitle": "Why Unstructured Group Trip Planning Breaks Down",
+  "quote": "When individual constraints remain hidden and everyone negotiates simultaneously without structure, compromise leaves everyone unsatisfied.",
+  "stats": [
+    {
+      "value": "74%",
+      "label": "Trip Drop-off",
+      "detail": "Group trips initiated in chat apps that stall and are eventually abandoned without booking."
+    },
+    {
+      "value": "62%",
+      "label": "Resentment Spike",
+      "detail": "Participants reporting silent resentment over asymmetric planning burden and unvoiced budget limits."
+    },
+    {
+      "value": "9.4 Days",
+      "label": "Debate Drag",
+      "detail": "Average time spent going back-and-forth on destinations before planning momentum drops to zero."
+    }
+  ],
+  "takeaways": [
+    "Asymmetric information: people hide budget & date limitations to avoid friction or social awkwardness.",
+    "Lack of sequential hierarchy: debating destinations before knowing budget guarantees circular arguments.",
+    "The 'Organizer' penalty: single individuals take the emotional and logistical burden, leading to burnout."
+  ]
+}

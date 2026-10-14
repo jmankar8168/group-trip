@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: group-trip-game
+    env: node
+    plan: free
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3000
+      - key: ADMIN_PASSCODE
+        generateValue: true
+      - key: DB_PATH
+        value: data/trip_game.db
+      - key: ALLOWED_ORIGINS
+        value: "*"
+    disk:
+      name: game-data
+      mountPath: /data
+      sizeGB: 1

@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0FA37F"/>
+      <stop offset="100%" stop-color="#086650"/>
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#000" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+  <!-- Rounded Base Icon -->
+  <rect width="512" height="512" rx="128" fill="url(#bgGrad)"/>
+  <!-- Decorative Ring -->
+  <circle cx="256" cy="256" r="190" stroke="#ffffff" stroke-opacity="0.25" stroke-width="12" stroke-dasharray="16 12"/>
+  <!-- Plane Graphic -->
+  <g transform="translate(256, 256) rotate(-35) translate(-140, -140)" filter="url(#shadow)">
+    <path d="M140 20 L170 110 L260 140 L260 170 L170 160 L140 260 L115 260 L130 170 L50 165 L30 190 L10 190 L20 145 L10 100 L30 100 L50 125 L130 120 L115 30 Z" fill="#ffffff"/>
+  </g>
+  <!-- 2 min Badge -->
+  <g transform="translate(300, 340)">
+    <rect width="160" height="60" rx="30" fill="#FBBF24" filter="url(#shadow)"/>
+    <text x="80" y="40" font-family="system-ui, sans-serif" font-weight="900" font-size="28" fill="#1E1B4B" text-anchor="middle">2 MIN</text>
+  </g>
+</svg>

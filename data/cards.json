@@ -1,0 +1,520 @@
+[
+  {
+    "id": "card-1",
+    "name": "The Over-planner",
+    "personaName": "Aarav",
+    "emoji": "📋",
+    "avatarColor": "#4f46e5",
+    "catchphrase": "I made an Excel sheet with 15-minute buffers!",
+    "personalBudget": {
+      "min": 5000,
+      "max": 12000,
+      "minLabel": "No sketchy dorms or shared bathrooms",
+      "maxLabel": "Buffer left for pre-booked guided tours"
+    },
+    "hardConstraints": [
+      { "type": "trip_length", "maxDays": 3, "label": "Max 3-day trip" },
+      { "type": "transport_ban", "mode": "boat", "label": "No boat/ferry routes" },
+      { "type": "diet", "rule": "vegetarian_required", "label": "Vegetarian food available" }
+    ],
+    "pettyConstraints": [
+      {
+        "id": "petty-1",
+        "tag": "no_monkeys",
+        "emoji": "🐒",
+        "playerLine": "Monkeys scare me",
+        "description": "Rejects destinations tagged monkey-heavy"
+      },
+      {
+        "id": "petty-2",
+        "tag": "clean_washrooms_only",
+        "emoji": "🚽",
+        "playerLine": "I won't use public washrooms",
+        "description": "No trekking, no camping, no road journeys over 5 hours"
+      }
+    ],
+    "dateReasonTemplates": [
+      {
+        "category": "Work",
+        "emoji": "💼",
+        "line": "I have an unavoidable quarterly review presentation on this day.",
+        "shortLine": "Work presentation"
+      },
+      {
+        "category": "Family",
+        "emoji": "🏠",
+        "line": "Family pooja at home. Mom made attendance mandatory.",
+        "shortLine": "Family pooja"
+      },
+      {
+        "category": "TripLength",
+        "emoji": "⏱️",
+        "line": "My PTO policy only permits a max 3-day weekend escape.",
+        "shortLine": "Exceeds 3-day leave cap"
+      }
+    ],
+    "hiddenPreference": "Secretly panics when activities are spontaneous or loosely planned without an hour-by-hour schedule.",
+    "behaviourRule": "Must ask at least 3 logistical or scheduling questions before agreeing to anything.",
+    "quote": "Wait, so what time are we waking up on Saturday, and when do we reach lunch?"
+  },
+  {
+    "id": "card-2",
+    "name": "The Budget Watcher",
+    "personaName": "Bhavna",
+    "emoji": "💸",
+    "avatarColor": "#10b981",
+    "catchphrase": "Do we really need a fancy hotel if we just sleep there?",
+    "personalBudget": {
+      "min": 3500,
+      "max": 8000,
+      "minLabel": "No roadside tent pitching or unpaid hitchhiking",
+      "maxLabel": "Strict salary cap before month-end"
+    },
+    "hardConstraints": [
+      { "type": "max_budget", "value": 8000, "label": "Strict budget ceiling: Rs 8,000 per person" },
+      { "type": "transport_ban", "mode": "flight", "label": "No flights (train or bus only)" }
+    ],
+    "pettyConstraints": [
+      {
+        "id": "petty-3",
+        "tag": "no_nightlife",
+        "emoji": "💸",
+        "playerLine": "Club cover charges are daylight robbery",
+        "description": "Rejects pricey nightlife clubs"
+      },
+      {
+        "id": "petty-4",
+        "tag": "ac_required",
+        "emoji": "🥵",
+        "playerLine": "I can't survive without AC",
+        "description": "Rejects hot destinations without AC"
+      }
+    ],
+    "dateReasonTemplates": [
+      {
+        "category": "Money",
+        "emoji": "💳",
+        "line": "Salary hits my account only after the 7th of the month.",
+        "shortLine": "Waiting for paycheck"
+      },
+      {
+        "category": "Family",
+        "emoji": "🎉",
+        "line": "Cousin's wedding sangeet on 22 Nov. Family will disown me if I skip.",
+        "shortLine": "Cousin's wedding sangeet"
+      }
+    ],
+    "hiddenPreference": "Hates appearing cheap in front of friends, so won't state the budget ceiling first.",
+    "behaviourRule": "Only reveal your budget limit if someone directly asks you for your specific number.",
+    "quote": "I mean... do we really need a luxury hotel if we're just going to sleep there?"
+  },
+  {
+    "id": "card-3",
+    "name": "The Weekend Only",
+    "personaName": "Chetan",
+    "emoji": "⏳",
+    "avatarColor": "#f59e0b",
+    "catchphrase": "My manager will literally reject any Monday leave!",
+    "personalBudget": {
+      "min": 4500,
+      "max": 9500,
+      "minLabel": "Decent hotel with hot shower is non-negotiable",
+      "maxLabel": "One weekend's allocated fun budget"
+    },
+    "hardConstraints": [
+      { "type": "weekend_only", "label": "Weekend only (Depart Friday, return by Sunday)" },
+      { "type": "max_travel_time", "hours": 6.0, "label": "One-way travel time under 6 hours" }
+    ],
+    "pettyConstraints": [
+      {
+        "id": "petty-5",
+        "tag": "max_2_nights",
+        "emoji": "😴",
+        "playerLine": "I can't sleep in new beds",
+        "description": "Trip must be 2 nights or fewer"
+      },
+      {
+        "id": "petty-6",
+        "tag": "no_sunrise_treks",
+        "emoji": "🌅",
+        "playerLine": "No activity before 10 AM",
+        "description": "Rejects sunrise treks and sunrise-tagged activities"
+      }
+    ],
+    "dateReasonTemplates": [
+      {
+        "category": "Work",
+        "emoji": "🏢",
+        "line": "Boss cancelled leaves for weekday deployments. Free only Fri-Sun.",
+        "shortLine": "Weekday leave embargo"
+      },
+      {
+        "category": "College",
+        "emoji": "📚",
+        "line": "Internal semester mid-term exams on weekdays.",
+        "shortLine": "Internal exams"
+      }
+    ],
+    "hiddenPreference": "Cannot afford to use PTO because of strict probation deadlines at work.",
+    "behaviourRule": "Firmly reject any trip dates or extensions spanning Monday or mid-week.",
+    "quote": "Guys, my manager will literally cancel my leaves if I take Monday off. It has to be Friday to Sunday."
+  },
+  {
+    "id": "card-4",
+    "name": "The Ghost",
+    "personaName": "Divya",
+    "emoji": "👻",
+    "avatarColor": "#8b5cf6",
+    "catchphrase": "...Sorry just saw this! What did we decide?",
+    "personalBudget": {
+      "min": 5000,
+      "max": 11000,
+      "minLabel": "Won't travel in general sleeper trains",
+      "maxLabel": "Credit card cycle limit"
+    },
+    "hardConstraints": [
+      { "type": "max_travel_time", "hours": 6.5, "label": "Travel time under 6.5 hours" },
+      { "type": "activity_ban", "value": "trekking", "label": "No exhausting treks" }
+    ],
+    "pettyConstraints": [
+      {
+        "id": "petty-7",
+        "tag": "no_low_connectivity",
+        "emoji": "📶",
+        "playerLine": "No network, no life",
+        "description": "Rejects destinations tagged low-connectivity"
+      },
+      {
+        "id": "petty-8",
+        "tag": "high_scenic_only",
+        "emoji": "📸",
+        "playerLine": "I won't go anywhere I can't get a good photo",
+        "description": "Rejects low scenic destinations"
+      }
+    ],
+    "dateReasonTemplates": [
+      {
+        "category": "Event",
+        "emoji": "🎸",
+        "line": "Already bought non-refundable concert tickets for that weekend.",
+        "shortLine": "Concert tickets booked"
+      },
+      {
+        "category": "Family",
+        "emoji": "🎂",
+        "line": "Mom's 50th birthday celebration at home.",
+        "shortLine": "Mom's birthday"
+      }
+    ],
+    "hiddenPreference": "Easily overwhelmed by group decision-making; checks messages once in a blue moon.",
+    "behaviourRule": "Wait at least 15 seconds before responding to any question or group prompt.",
+    "quote": "...Sorry just saw this! What did we decide?"
+  },
+  {
+    "id": "card-5",
+    "name": "The \"I'm Fine With Anything\"",
+    "personaName": "Kabir",
+    "emoji": "🙃",
+    "avatarColor": "#ec4899",
+    "catchphrase": "Whatever everyone decides works for me... except that!",
+    "personalBudget": {
+      "min": 4000,
+      "max": 9000,
+      "minLabel": "Clean private room is non-negotiable",
+      "maxLabel": "Savings target for the month"
+    },
+    "hardConstraints": [
+      { "type": "environment_ban", "value": "beach", "label": "No beach destinations" },
+      { "type": "trip_length", "maxDays": 3, "label": "Max 3-day trip" }
+    ],
+    "pettyConstraints": [
+      {
+        "id": "petty-9",
+        "tag": "no_mud",
+        "emoji": "👟",
+        "playerLine": "I just bought new shoes, no mud",
+        "description": "No trekking, rafting, or camping"
+      },
+      {
+        "id": "petty-10",
+        "tag": "no_heritage",
+        "emoji": "🏛️",
+        "playerLine": "Temples and forts bore me",
+        "description": "Rejects heritage walks as main activity"
+      }
+    ],
+    "dateReasonTemplates": [
+      {
+        "category": "Family",
+        "emoji": "🚗",
+        "line": "Dad taking the family car for outstation ancestral visit.",
+        "shortLine": "Family car unavailable"
+      },
+      {
+        "category": "Health",
+        "emoji": "🦷",
+        "line": "Scheduled dental root canal follow-up appointment.",
+        "shortLine": "Dental appointment"
+      }
+    ],
+    "hiddenPreference": "Claims to have no preferences, but hates beaches and crowded tourist traps.",
+    "behaviourRule": "Always say 'I'm fine with anything' on the first suggestion, but bring up your restrictions on the second.",
+    "quote": "Honestly whatever you guys pick is cool with me. Just please not Goa again."
+  },
+  {
+    "id": "card-6",
+    "name": "The Road Tripper",
+    "personaName": "Meera",
+    "emoji": "🚗",
+    "avatarColor": "#06b6d4",
+    "catchphrase": "The journey is the destination! Let's just drive!",
+    "personalBudget": {
+      "min": 4500,
+      "max": 10000,
+      "minLabel": "Need a car with solid AC and verified highway tyres",
+      "maxLabel": "Petrol, tolls, and service budget"
+    },
+    "hardConstraints": [
+      { "type": "max_travel_time", "hours": 6.0, "label": "Max travel time 6 hours" },
+      { "type": "transport_ban", "mode": "flight", "label": "No flights (road trips preferred)" }
+    ],
+    "pettyConstraints": [
+      {
+        "id": "petty-11",
+        "tag": "no_winding_roads",
+        "emoji": "🚌",
+        "playerLine": "Winding roads make me puke",
+        "description": "No hill-road journeys over 3 hours"
+      },
+      {
+        "id": "petty-12",
+        "tag": "no_dust",
+        "emoji": "🤧",
+        "playerLine": "Dust triggers my sneezing",
+        "description": "No desert or dusty heritage towns"
+      }
+    ],
+    "dateReasonTemplates": [
+      {
+        "category": "Work",
+        "emoji": "💻",
+        "line": "Weekend on-call shift rotation for office servers.",
+        "shortLine": "On-call weekend shift"
+      },
+      {
+        "category": "Event",
+        "emoji": "🏏",
+        "line": "India match screening with college batchmates.",
+        "shortLine": "India cricket match"
+      }
+    ],
+    "hiddenPreference": "Loves driving with aux music, but gets carsick on intense winding mountain curves.",
+    "behaviourRule": "Enthusiastically push for driving options within reasonable hours.",
+    "quote": "Guys, road trips are so much more vibe than sitting in an airport! Let's hit the highway!"
+  },
+  {
+    "id": "card-7",
+    "name": "The Foodie",
+    "personaName": "Rohan",
+    "emoji": "🍜",
+    "avatarColor": "#f43f5e",
+    "catchphrase": "If the food isn't top tier, the trip is ruined.",
+    "personalBudget": {
+      "min": 5000,
+      "max": 12500,
+      "minLabel": "Refuse roadside dhaba for every single meal",
+      "maxLabel": "Food budget must have room for legendary treats"
+    },
+    "hardConstraints": [
+      { "type": "diet", "rule": "vegetarian_required", "label": "Strict vegetarian food required" },
+      { "type": "diet", "rule": "no_seafood", "label": "Seafood allergy: no seafood destinations" }
+    ],
+    "pettyConstraints": [
+      {
+        "id": "petty-13",
+        "tag": "proper_veg",
+        "emoji": "🍛",
+        "playerLine": "I need proper vegetarian food",
+        "description": "Destination must be tagged vegetarian-friendly"
+      },
+      {
+        "id": "petty-14",
+        "tag": "no_humidity",
+        "emoji": "💇",
+        "playerLine": "My hair frizzes in humidity",
+        "description": "No humid destinations"
+      }
+    ],
+    "dateReasonTemplates": [
+      {
+        "category": "Family",
+        "emoji": "🍽️",
+        "line": "Annual Diwali family feast that cannot be rescheduled.",
+        "shortLine": "Family festival feast"
+      },
+      {
+        "category": "Work",
+        "emoji": "📊",
+        "line": "Client meeting shifted to Friday evening.",
+        "shortLine": "Friday client review"
+      }
+    ],
+    "hiddenPreference": "Carefully evaluates every destination purely on famous food stalls and sweets.",
+    "behaviourRule": "Ask about lunch, snacks, and dinner options before confirming any itinerary.",
+    "quote": "Okay, but what's the signature dish in that town? Do they have good veg food?"
+  },
+  {
+    "id": "card-8",
+    "name": "The Mountain Lover",
+    "personaName": "Ananya",
+    "emoji": "🏔️",
+    "avatarColor": "#0ea5e9",
+    "catchphrase": "Take me to the hills where there's peace and chai!",
+    "personalBudget": {
+      "min": 4500,
+      "max": 10500,
+      "minLabel": "Safe mountain homestay with hot water",
+      "maxLabel": "Saving for winter trekking boots"
+    },
+    "hardConstraints": [
+      { "type": "environment_ban", "value": "beach", "label": "No beach destinations" },
+      { "type": "climate_ban", "value": "hot", "label": "Can't visit hot places" }
+    ],
+    "pettyConstraints": [
+      {
+        "id": "petty-15",
+        "tag": "no_sun_activities",
+        "emoji": "🌞",
+        "playerLine": "I burn in 5 minutes",
+        "description": "No open-sun beach or desert activities"
+      },
+      {
+        "id": "petty-16",
+        "tag": "no_backpacking",
+        "emoji": "🧳",
+        "playerLine": "I refuse to carry my own luggage",
+        "description": "Must have stay with transfer service"
+      }
+    ],
+    "dateReasonTemplates": [
+      {
+        "category": "Work",
+        "emoji": "🏢",
+        "line": "Annual team offsite scheduled by HR.",
+        "shortLine": "Company team offsite"
+      },
+      {
+        "category": "College",
+        "emoji": "📝",
+        "line": "Project submission viva on Monday morning.",
+        "shortLine": "College project viva"
+      }
+    ],
+    "hiddenPreference": "Detests humid, sweaty weather; craves misty hills, pine smells, and viewpoints.",
+    "behaviourRule": "Reject any destination with sun, humidity, or temperatures over 28 degrees.",
+    "quote": "Why would we go melt in the heat when we could be sipping cutting chai in the mist?"
+  },
+  {
+    "id": "card-9",
+    "name": "The Beach Bum",
+    "personaName": "Vikram",
+    "emoji": "🏖️",
+    "avatarColor": "#eab308",
+    "catchphrase": "Life's better with sand on your feet and sunset vibes.",
+    "personalBudget": {
+      "min": 5000,
+      "max": 11500,
+      "minLabel": "Comfortable stay near the action",
+      "maxLabel": "Max leisure spending limit"
+    },
+    "hardConstraints": [
+      { "type": "climate_ban", "value": "cold", "label": "No freezing cold places" },
+      { "type": "altitude_ban", "value": "high", "label": "Can't handle high altitude" }
+    ],
+    "pettyConstraints": [
+      {
+        "id": "petty-17",
+        "tag": "no_cold_or_high_altitude",
+        "emoji": "🥶",
+        "playerLine": "I feel cold even in 22 degrees",
+        "description": "No cold climate or high altitude in chosen month"
+      },
+      {
+        "id": "petty-18",
+        "tag": "no_swimming_water_sports",
+        "emoji": "🏊",
+        "playerLine": "I don't swim",
+        "description": "No water sports or river rafting"
+      }
+    ],
+    "dateReasonTemplates": [
+      {
+        "category": "Event",
+        "emoji": "⚽",
+        "line": "Semi-final football league match with local club.",
+        "shortLine": "Football club match"
+      },
+      {
+        "category": "Family",
+        "emoji": "🎉",
+        "line": "Uncle's retirement dinner party.",
+        "shortLine": "Retirement dinner"
+      }
+    ],
+    "hiddenPreference": "Loves vibrant warmth and outdoor cafes, hates shivering in thermals.",
+    "behaviourRule": "Immediately protest if anyone suggests mountains or cold hill stations.",
+    "quote": "Bro, why do we want to pack heavy jackets and freeze? Let's go somewhere warm!"
+  },
+  {
+    "id": "card-10",
+    "name": "The Sensitive Traveler",
+    "personaName": "Pooja",
+    "emoji": "🤢",
+    "avatarColor": "#14b8a6",
+    "catchphrase": "My stomach and inner ear have their own veto power.",
+    "personalBudget": {
+      "min": 5500,
+      "max": 12000,
+      "minLabel": "Sanitized private room mandatory for peace of mind",
+      "maxLabel": "Personal wellness and travel comfort limit"
+    },
+    "hardConstraints": [
+      { "type": "transport_ban", "mode": "boat", "label": "Seasick: no ferry or boat cruises" },
+      { "type": "diet", "rule": "no_seafood", "label": "Seafood allergy: no seafood destinations" },
+      { "type": "max_travel_time", "hours": 6.0, "label": "Travel time under 6 hours" }
+    ],
+    "pettyConstraints": [
+      {
+        "id": "petty-19",
+        "tag": "no_boat",
+        "emoji": "🚢",
+        "playerLine": "I get seasick",
+        "description": "No boat, ferry, cruise, or water-crossing legs"
+      },
+      {
+        "id": "petty-20",
+        "tag": "no_forest_camping",
+        "emoji": "🦟",
+        "playerLine": "Mosquitoes love me",
+        "description": "No forest camping or jungle tents"
+      }
+    ],
+    "dateReasonTemplates": [
+      {
+        "category": "Health",
+        "emoji": "🩺",
+        "line": "Scheduled routine medical checkup and physiotherapy.",
+        "shortLine": "Physiotherapy appointment"
+      },
+      {
+        "category": "Family",
+        "emoji": "🏡",
+        "line": "Grandmother visiting from village for the weekend.",
+        "shortLine": "Grandmother visiting"
+      }
+    ],
+    "hiddenPreference": "Gets motion sickness easily, very sensitive to bad smells, unhygienic washrooms, and damp beds.",
+    "behaviourRule": "Ask about travel comfort, road conditions, and hotel sanitation.",
+    "quote": "If the road has hairpin bends for 4 hours, I will be a zombie. What kind of bus is it?"
+  }
+]

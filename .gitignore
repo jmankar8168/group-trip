@@ -1,0 +1,19 @@
+# Node dependencies
+node_modules/
+npm-debug.log*
+
+# Environment secrets
+.env
+.env.local
+
+# Persistent SQLite database (local dev copies)
+*.db
+*.db-journal
+
+# Logs
+logs/
+*.log
+
+# OS generated files
+.DS_Store
+Thumbs.db

@@ -1,0 +1,1156 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Player Screen - Plan a Trip in 2 Minutes</title>
+  <meta name="theme-color" content="#0FA37F">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Trip Game">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="apple-touch-icon" href="/icon.svg">
+  <link rel="icon" type="image/svg+xml" href="/icon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    body {
+      background-color: var(--bg-fog, #ECEAEA);
+      color: var(--ink, #111111);
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      touch-action: manipulation;
+    }
+
+    .mobile-frame {
+      width: 100%;
+      max-width: 440px;
+      min-height: 100vh;
+      background: var(--surface, #ffffff);
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 0 24px rgba(0,0,0,0.06);
+      position: relative;
+      padding-bottom: env(safe-area-inset-bottom, 16px);
+    }
+
+    /* Accessibility & touch target guidelines */
+    button, .btn, input, select {
+      min-height: 44px;
+    }
+
+    /* Live connection banner */
+    .connection-banner {
+      display: none;
+      background: #DC2626;
+      color: #ffffff;
+      padding: 0.5rem 1rem;
+      font-size: 0.8rem;
+      font-weight: 800;
+      text-align: center;
+      position: sticky;
+      top: 0;
+      z-index: 999;
+      animation: pulseBanner 2s infinite ease-in-out;
+    }
+    .connection-banner.active {
+      display: block;
+    }
+    @keyframes pulseBanner {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.85; }
+    }
+
+    .top-pill-bar {
+      padding: 0.85rem 1.25rem;
+      border-bottom: 1.5px solid var(--border-color, #e5e7eb);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #ffffff;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+
+    .screen-panel {
+      display: none;
+      padding: 1.25rem;
+      flex: 1;
+      flex-direction: column;
+    }
+    .screen-panel.active {
+      display: flex;
+    }
+
+    /* Group cards */
+    .group-join-card {
+      background: #f8fafc;
+      border: 1.5px solid var(--border-color, #e2e8f0);
+      border-radius: var(--radius-lg, 16px);
+      padding: 1rem 1.25rem;
+      margin-bottom: 0.75rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .group-join-card.full {
+      opacity: 0.55;
+    }
+
+    /* Role Card Deck */
+    .role-card-deck {
+      background: #ffffff;
+      border: 2px solid var(--border-color, #e2e8f0);
+      border-radius: var(--radius-xl, 24px);
+      padding: 1.5rem;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.04);
+      margin-bottom: 1.25rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .role-avatar-wrap {
+      width: 96px;
+      height: 96px;
+      margin: 0 auto 0.75rem auto;
+    }
+
+    /* Dual budget bar */
+    .budget-bar-track {
+      background: #e2e8f0;
+      height: 10px;
+      border-radius: 999px;
+      position: relative;
+      margin: 0.5rem 0 1rem 0;
+    }
+    .budget-bar-fill {
+      background: var(--primary, #0FA37F);
+      height: 100%;
+      border-radius: 999px;
+      position: absolute;
+    }
+
+    /* Calendar Grid Modal */
+    .calendar-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(4px);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+    .calendar-modal.active {
+      display: flex;
+    }
+    .calendar-content {
+      background: #ffffff;
+      width: 100%;
+      max-width: 400px;
+      border-radius: var(--radius-xl, 24px);
+      padding: 1.5rem;
+      box-shadow: 0 12px 32px rgba(0,0,0,0.2);
+    }
+    .month-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 6px;
+      margin-top: 1rem;
+    }
+    .weekday-header {
+      font-size: 0.75rem;
+      font-weight: 800;
+      text-align: center;
+      color: var(--ink-soft, #8A8A8A);
+      padding-bottom: 4px;
+    }
+    .cal-day-cell {
+      aspect-ratio: 1;
+      border-radius: 10px;
+      border: 1.5px solid var(--border-color, #e2e8f0);
+      background: #f8fafc;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+    .cal-day-cell:active {
+      transform: scale(0.92);
+    }
+    .cal-day-cell.available {
+      background: #E3F7EA;
+      border-color: #1DB954;
+      color: #15803d;
+    }
+    .cal-day-cell.unavailable {
+      background: #FDE8E8;
+      border-color: #E5383B;
+      color: #b91c1c;
+    }
+    .cal-day-cell.available::after {
+      content: '✓';
+      font-size: 0.7rem;
+      font-weight: 900;
+    }
+    .cal-day-cell.unavailable::after {
+      content: '✗';
+      font-size: 0.7rem;
+      font-weight: 900;
+    }
+
+    /* Modal dialogs */
+    .app-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(4px);
+      z-index: 210;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+    .app-modal.active {
+      display: flex;
+    }
+    .app-modal-card {
+      background: #ffffff;
+      width: 100%;
+      max-width: 400px;
+      border-radius: var(--radius-xl, 24px);
+      padding: 1.5rem;
+      box-shadow: 0 12px 32px rgba(0,0,0,0.2);
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    /* Bouncing dots waiting animation */
+    .waiting-dots-wrap {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin: 1.5rem 0;
+    }
+    .waiting-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--primary, #0FA37F);
+      animation: bounceDot 1.4s infinite ease-in-out both;
+    }
+    .waiting-dot:nth-child(1) { animation-delay: -0.32s; }
+    .waiting-dot:nth-child(2) { animation-delay: -0.16s; }
+
+    @keyframes bounceDot {
+      0%, 80%, 100% { transform: scale(0); }
+      40% { transform: scale(1); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="mobile-frame">
+
+    <!-- Live Disconnection Alert Banner -->
+    <div id="connection-banner" class="connection-banner">
+      ⚡ Network connection lost. Reconnecting to classroom session...
+    </div>
+
+    <!-- Top Status Bar -->
+    <div class="top-pill-bar">
+      <div>
+        <span id="header-group-name" style="font-weight: 800; font-size: 0.95rem; color: var(--ink);">Plan a Trip</span>
+        <div id="header-nickname" style="font-size: 0.8rem; color: var(--ink-soft);">Connecting...</div>
+      </div>
+      <div id="header-role-pill" style="display: none; background: var(--primary-light); color: var(--primary); font-size: 0.75rem; font-weight: 800; padding: 4px 10px; border-radius: 999px;">
+        Role
+      </div>
+    </div>
+
+    <!-- 1. LOGIN / NICKNAME SCREEN (if not passed in query) -->
+    <div id="login-panel" class="screen-panel active">
+      <div style="text-align: center; margin: 2rem 0 1.5rem 0;">
+        <span class="card-badge" style="background: var(--primary-light); color: var(--primary); margin: 0 auto 0.75rem auto;">
+          Classroom Session
+        </span>
+        <h1 style="font-size: 1.8rem; font-weight: 900; margin-bottom: 0.5rem;">Join Class Session</h1>
+        <p style="color: var(--ink-soft); font-size: 0.95rem;">Enter the join code from the projector and your nickname.</p>
+      </div>
+
+      <form id="mobile-join-form">
+        <div class="form-group" style="margin-bottom: 1rem;">
+          <label style="font-weight: 700; font-size: 0.85rem; color: var(--ink-soft);">SESSION CODE</label>
+          <input type="text" id="play-code-input" class="form-control" style="font-family: monospace; font-size: 1.5rem; text-align: center; text-transform: uppercase; font-weight: 800; letter-spacing: 0.2em;" placeholder="TRIP" maxlength="4" required>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 1.5rem;">
+          <label style="font-weight: 700; font-size: 0.85rem; color: var(--ink-soft);">YOUR NICKNAME</label>
+          <input type="text" id="play-nick-input" class="form-control" placeholder="e.g. Rahul, Priya" maxlength="20" required>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; padding: 0.95rem; font-weight: 800; font-size: 1.05rem; border-radius: var(--radius-md);">
+          Join Session &rarr;
+        </button>
+
+        <div style="margin-top: 1.5rem; padding: 0.85rem; background: #f8fafc; border-radius: var(--radius-md); border: 1px solid var(--border-color); font-size: 0.75rem; color: var(--ink-soft); text-align: center; line-height: 1.4;">
+          🔒 <strong>Anonymous Research Notice:</strong> Gameplay choices (dates, destinations, votes, ratings) are collected anonymously to study group decision friction. No personal or sensitive data is stored.
+        </div>
+      </form>
+    </div>
+
+    <!-- 2. LATE JOINER LOCKOUT SCREEN -->
+    <div id="late-joiner-panel" class="screen-panel">
+      <div style="text-align: center; padding: 4rem 1rem;">
+        <div style="font-size: 3.5rem; margin-bottom: 1rem;">⏳</div>
+        <h2 style="font-size: 1.6rem; font-weight: 900; margin-bottom: 0.5rem;">Round in Progress</h2>
+        <p style="color: var(--ink-soft); font-size: 1rem; line-height: 1.5;">
+          A deliberation round is currently being played by the class. Please wait for the teacher to reveal results and start the next round!
+        </p>
+      </div>
+    </div>
+
+    <!-- 3. GROUP SELECTION SCREEN -->
+    <div id="group-select-panel" class="screen-panel">
+      <div style="margin-bottom: 1.25rem;">
+        <h2 style="font-size: 1.5rem; font-weight: 900; margin-bottom: 0.25rem;">Choose or Create Group</h2>
+        <p style="color: var(--ink-soft); font-size: 0.9rem;">Form a group of 4–6 students at your table.</p>
+      </div>
+
+      <!-- Create Group Card -->
+      <div style="background: #ffffff; border: 2px solid var(--primary-light); border-radius: var(--radius-lg); padding: 1.25rem; margin-bottom: 1.5rem;">
+        <h3 style="font-size: 1.1rem; font-weight: 800; margin: 0 0 0.5rem 0;">Start a New Group</h3>
+        <p style="font-size: 0.85rem; color: var(--ink-soft); margin-bottom: 0.75rem;">Your group gets an auto-generated fun name. You can edit it if you like:</p>
+        <div style="display: flex; gap: 0.5rem;">
+          <input type="text" id="create-group-name-input" class="form-control" value="Team Maggi" maxlength="25">
+          <button id="create-group-btn" class="btn btn-primary" style="white-space: nowrap; font-weight: 800;">Create</button>
+        </div>
+      </div>
+
+      <!-- Join Existing Group List -->
+      <div>
+        <h3 style="font-size: 1.1rem; font-weight: 800; margin-bottom: 0.75rem;">Or Join Open Group</h3>
+        <div id="open-groups-list">
+          <div style="text-align: center; color: var(--ink-soft); padding: 2rem 0; font-size: 0.9rem;">
+            No groups created yet. Be the first to start one!
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. GROUP WAITING ROOM SCREEN -->
+    <div id="group-waiting-panel" class="screen-panel">
+      <div style="text-align: center; margin-bottom: 1.5rem;">
+        <span class="card-badge" style="background: var(--primary-light); color: var(--primary); margin: 0 auto 0.5rem auto;">
+          Your Table Group
+        </span>
+        <h1 id="waiting-group-title" style="font-size: 1.8rem; font-weight: 900; margin-bottom: 0.25rem;">Team Maggi</h1>
+        <div id="waiting-member-count" style="font-size: 0.95rem; font-weight: 700; color: var(--ink-soft);">0 / 6 Members</div>
+      </div>
+
+      <!-- Member chips -->
+      <div style="background: #f8fafc; border: 1.5px solid var(--border-color); border-radius: var(--radius-lg); padding: 1.25rem; margin-bottom: 1.5rem;">
+        <div style="font-size: 0.85rem; font-weight: 800; text-transform: uppercase; color: var(--ink-soft); margin-bottom: 0.75rem;">
+          Teammates at Table
+        </div>
+        <div id="waiting-members-chips" style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+          <!-- Member chips populated -->
+        </div>
+      </div>
+
+      <!-- Ready Status Callout -->
+      <div id="ready-status-box" style="text-align: center; padding: 1rem; border-radius: var(--radius-md); background: #fef3c7; color: #92400e; font-weight: 700; font-size: 0.95rem; margin-bottom: 1.5rem;">
+        Need at least 4 members to form a valid group.
+      </div>
+
+      <!-- Big Ready Button -->
+      <button id="toggle-ready-btn" class="btn btn-secondary" style="width: 100%; justify-content: center; padding: 1.1rem; font-size: 1.15rem; font-weight: 800; border-radius: var(--radius-md); margin-bottom: 1rem;">
+        Tap to Mark Ready
+      </button>
+
+      <button id="leave-group-btn" class="btn btn-secondary" style="width: 100%; justify-content: center; padding: 0.7rem; font-size: 0.9rem; color: #ef4444; border: 1px solid #fee2e2;">
+        Leave Group
+      </button>
+    </div>
+
+    <!-- 5. ACTIVE ROUND GAMEPLAY SCREEN -->
+    <div id="round-panel" class="screen-panel">
+      <!-- Role Card Presentation -->
+      <div class="role-card-deck">
+        <div class="role-avatar-wrap" id="player-avatar-container">
+          <!-- Vector illustration injected -->
+        </div>
+        <div style="text-align: center; margin-bottom: 1rem;">
+          <h2 id="player-role-title" style="font-size: 1.4rem; font-weight: 900; margin: 0 0 0.25rem 0;">Role Name</h2>
+          <div id="player-persona-name" style="font-size: 0.95rem; font-weight: 700; color: var(--primary);">Persona</div>
+        </div>
+
+        <!-- Secret Constraints -->
+        <div style="background: #f8fafc; border-radius: var(--radius-md); padding: 1rem; border: 1px solid var(--border-color); margin-bottom: 1rem;">
+          <div style="font-size: 0.8rem; font-weight: 800; text-transform: uppercase; color: var(--ink-soft); margin-bottom: 0.35rem;">
+            🤫 Your Secret Constraints
+          </div>
+          <div id="player-constraints-list" style="font-size: 0.9rem; line-height: 1.5; color: var(--ink);">
+            <!-- Constraints text -->
+          </div>
+        </div>
+
+        <!-- Petty Excuse -->
+        <div style="background: #FFFBEB; border: 1.5px solid #FDE68A; border-radius: var(--radius-md); padding: 0.85rem; margin-bottom: 1rem;">
+          <div style="font-size: 0.8rem; font-weight: 800; text-transform: uppercase; color: #B45309; margin-bottom: 0.25rem;">
+            ⚡ Your Quirky Petty Excuse
+          </div>
+          <div id="player-petty-excuse" style="font-size: 0.88rem; font-style: italic; color: #92400E;">
+            "Will complain non-stop if waking up early"
+          </div>
+        </div>
+
+        <!-- Personal Budget Range -->
+        <div>
+          <div style="display: flex; justify-content: space-between; font-size: 0.85rem; font-weight: 800; margin-bottom: 0.25rem;">
+            <span style="color: var(--ink-soft);">PERSONAL BUDGET</span>
+            <span id="player-budget-text" style="color: var(--primary);">₹4,000 – ₹9,000</span>
+          </div>
+          <div class="budget-bar-track">
+            <div id="player-budget-fill" class="budget-bar-fill" style="left: 20%; width: 50%;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div style="display: flex; gap: 0.75rem; margin-top: auto;">
+        <button id="open-calendar-btn" class="btn btn-secondary" style="flex: 1; justify-content: center; padding: 0.95rem; font-weight: 800;">
+          📅 Check My Dates
+        </button>
+        <button id="open-propose-btn" class="btn btn-primary" style="flex: 1; justify-content: center; padding: 0.95rem; font-weight: 800;">
+          ✈️ Propose Plan
+        </button>
+      </div>
+    </div>
+
+    <!-- 6. POST-ROUND SURVEY FORM (Instant for locked, or on Time's Up) -->
+    <div id="survey-panel" class="screen-panel">
+      <div style="text-align: center; margin: 1rem 0 1.5rem 0;">
+        <span class="card-badge" style="background: var(--primary-light); color: var(--primary); margin: 0 auto 0.5rem auto;">
+          Post-Round Research
+        </span>
+        <h2 id="survey-header-title" style="font-size: 1.6rem; font-weight: 900; margin-bottom: 0.25rem;">Time's Up!</h2>
+        <p style="color: var(--ink-soft); font-size: 0.9rem;">Share quick feedback to fuel the classroom results board.</p>
+      </div>
+
+      <form id="rating-form">
+        <!-- Satisfaction -->
+        <div style="margin-bottom: 1.25rem;">
+          <label style="font-weight: 800; font-size: 0.9rem; display: block; margin-bottom: 0.5rem;">
+            1. Overall Satisfaction with the Process
+          </label>
+          <div style="display: flex; justify-content: space-between; gap: 0.5rem;">
+            <label style="flex: 1; text-align: center; border: 1.5px solid var(--border-color); border-radius: 8px; padding: 0.6rem; font-weight: 800; cursor: pointer;">
+              <input type="radio" name="satisfaction" value="1" required> 1★
+            </label>
+            <label style="flex: 1; text-align: center; border: 1.5px solid var(--border-color); border-radius: 8px; padding: 0.6rem; font-weight: 800; cursor: pointer;">
+              <input type="radio" name="satisfaction" value="2"> 2★
+            </label>
+            <label style="flex: 1; text-align: center; border: 1.5px solid var(--border-color); border-radius: 8px; padding: 0.6rem; font-weight: 800; cursor: pointer;">
+              <input type="radio" name="satisfaction" value="3"> 3★
+            </label>
+            <label style="flex: 1; text-align: center; border: 1.5px solid var(--border-color); border-radius: 8px; padding: 0.6rem; font-weight: 800; cursor: pointer;">
+              <input type="radio" name="satisfaction" value="4"> 4★
+            </label>
+            <label style="flex: 1; text-align: center; border: 1.5px solid var(--border-color); border-radius: 8px; padding: 0.6rem; font-weight: 800; cursor: pointer;">
+              <input type="radio" name="satisfaction" value="5" checked> 5★
+            </label>
+          </div>
+        </div>
+
+        <!-- Felt Heard -->
+        <div style="margin-bottom: 1.25rem;">
+          <label style="font-weight: 800; font-size: 0.9rem; display: block; margin-bottom: 0.5rem;">
+            2. Did you feel your constraints were heard?
+          </label>
+          <div style="display: flex; gap: 1rem;">
+            <label style="flex: 1; text-align: center; border: 1.5px solid var(--border-color); border-radius: 8px; padding: 0.6rem; font-weight: 800; cursor: pointer;">
+              <input type="radio" name="feltHeard" value="yes" checked required> Yes
+            </label>
+            <label style="flex: 1; text-align: center; border: 1.5px solid var(--border-color); border-radius: 8px; padding: 0.6rem; font-weight: 800; cursor: pointer;">
+              <input type="radio" name="feltHeard" value="no"> No
+            </label>
+          </div>
+        </div>
+
+        <!-- Biggest Source of Conflict -->
+        <div style="margin-bottom: 1.25rem;">
+          <label style="font-weight: 800; font-size: 0.9rem; display: block; margin-bottom: 0.5rem;">
+            3. Biggest source of conflict in your group?
+          </label>
+          <select id="conflict-source-select" class="form-control" style="font-weight: 700;">
+            <option value="Dates">Calendar Dates & Schedules</option>
+            <option value="Budget">Budget Limits & Costs</option>
+            <option value="Destination">Destination Disagreement</option>
+            <option value="Communication">Communication / People not talking</option>
+            <option value="Unequal effort">Unequal Effort / Dominating</option>
+          </select>
+        </div>
+
+        <!-- Private twist disclosure (only if assigned twist) -->
+        <div id="twist-disclosure-group" style="display: none; margin-bottom: 1.5rem; background: #FFFBEB; padding: 1rem; border-radius: var(--radius-md); border: 1.5px solid #FDE68A;">
+          <label style="font-weight: 800; font-size: 0.9rem; color: #92400E; display: block; margin-bottom: 0.5rem;">
+            4. Did you tell the group about your private twist within 30 seconds?
+          </label>
+          <div style="display: flex; gap: 1rem;">
+            <label style="flex: 1; text-align: center; border: 1.5px solid #F59E0B; background: #ffffff; border-radius: 8px; padding: 0.6rem; font-weight: 800; cursor: pointer;">
+              <input type="radio" name="disclosedTwist" value="yes"> Yes
+            </label>
+            <label style="flex: 1; text-align: center; border: 1.5px solid #F59E0B; background: #ffffff; border-radius: 8px; padding: 0.6rem; font-weight: 800; cursor: pointer;">
+              <input type="radio" name="disclosedTwist" value="no" checked> No
+            </label>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; padding: 1rem; font-size: 1.05rem; font-weight: 800; border-radius: var(--radius-md);">
+          Submit Responses &rarr;
+        </button>
+      </form>
+    </div>
+
+    <!-- 7. WAITING FOR OTHER GROUPS (PLAYFUL ANIMATION) -->
+    <div id="waiting-reveal-panel" class="screen-panel">
+      <div style="text-align: center; padding: 3rem 1rem;">
+        <!-- Cute animated SVG character -->
+        <div style="width: 120px; height: 120px; margin: 0 auto 1.5rem auto;">
+          <svg viewBox="0 0 120 120" width="100%" height="100%">
+            <circle cx="60" cy="60" r="50" fill="#EAF4FF" stroke="#0284C7" stroke-width="3" stroke-dasharray="4 3"/>
+            <circle cx="60" cy="54" r="24" fill="#FDE68A"/>
+            <circle cx="52" cy="50" r="3" fill="#1E1B4B"/>
+            <circle cx="68" cy="50" r="3" fill="#1E1B4B"/>
+            <path d="M54 62 Q60 68 66 62" stroke="#92400E" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+            <path d="M42 38 C42 24 55 20 60 20 C72 20 78 26 78 38 Z" fill="#0284C7"/>
+          </svg>
+        </div>
+
+        <h2 style="font-size: 1.6rem; font-weight: 900; margin-bottom: 0.5rem;">Responses Recorded!</h2>
+        <p style="color: var(--ink-soft); font-size: 1rem; line-height: 1.5; margin-bottom: 1.5rem;">
+          Great job! Waiting for all groups to wrap up. Keep your eyes on the projector for the class reveal.
+        </p>
+
+        <!-- Bouncing dots -->
+        <div class="waiting-dots-wrap">
+          <div class="waiting-dot"></div>
+          <div class="waiting-dot"></div>
+          <div class="waiting-dot"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- CALENDAR POPUP MODAL -->
+  <div id="calendar-modal" class="calendar-modal">
+    <div class="calendar-content">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+        <h3 style="font-size: 1.25rem; font-weight: 900; margin: 0;">Private Date Checker</h3>
+        <button id="close-calendar-btn" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--ink-soft);">&times;</button>
+      </div>
+      <p style="font-size: 0.85rem; color: var(--ink-soft); margin-bottom: 0.5rem;">
+        Tap any day to test availability. Results are strictly private to you.
+      </p>
+
+      <div class="month-grid">
+        <div class="weekday-header">M</div>
+        <div class="weekday-header">T</div>
+        <div class="weekday-header">W</div>
+        <div class="weekday-header">T</div>
+        <div class="weekday-header">F</div>
+        <div class="weekday-header">S</div>
+        <div class="weekday-header">S</div>
+        <!-- 28 Days populated -->
+        <div id="calendar-days-container" style="display: contents;"></div>
+      </div>
+
+      <!-- Live Reason Toast inside calendar -->
+      <div id="calendar-reason-toast" style="display: none; background: #f1f5f9; border-radius: 8px; padding: 0.75rem; margin-top: 1rem; font-size: 0.85rem; color: var(--ink);">
+        <!-- Reason text -->
+      </div>
+    </div>
+  </div>
+
+  <!-- PROPOSE PLAN MODAL -->
+  <div id="propose-modal" class="app-modal">
+    <div class="app-modal-card">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+        <h3 style="font-size: 1.25rem; font-weight: 900; margin: 0;">Propose Group Plan</h3>
+        <button id="close-propose-btn" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--ink-soft);">&times;</button>
+      </div>
+
+      <form id="plan-form">
+        <!-- Destination -->
+        <div style="margin-bottom: 1rem;">
+          <label style="font-weight: 800; font-size: 0.85rem; color: var(--ink-soft);">DESTINATION</label>
+          <select id="plan-dest-select" class="form-control" style="font-weight: 700;"></select>
+        </div>
+
+        <!-- Date Window -->
+        <div style="margin-bottom: 1rem;">
+          <label style="font-weight: 800; font-size: 0.85rem; color: var(--ink-soft);">DATE WINDOW</label>
+          <select id="plan-date-select" class="form-control" style="font-weight: 700;"></select>
+        </div>
+
+        <!-- Transport Mode -->
+        <div style="margin-bottom: 1rem;">
+          <label style="font-weight: 800; font-size: 0.85rem; color: var(--ink-soft);">TRANSPORT MODE</label>
+          <select id="plan-transport-select" class="form-control" style="font-weight: 700;">
+            <option value="Train">Express Train</option>
+            <option value="Flight">Flight</option>
+            <option value="Road Trip">Road Trip / Cab</option>
+          </select>
+        </div>
+
+        <!-- Main Activity -->
+        <div style="margin-bottom: 1.5rem;">
+          <label style="font-weight: 800; font-size: 0.85rem; color: var(--ink-soft);">MAIN ACTIVITY</label>
+          <select id="plan-activity-select" class="form-control" style="font-weight: 700;"></select>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; padding: 0.95rem; font-weight: 800; font-size: 1rem; border-radius: var(--radius-md);">
+          Lock Group Plan &rarr;
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- PLAN BLOCKED REASON MODAL -->
+  <div id="blocked-modal" class="app-modal">
+    <div class="app-modal-card" style="border: 2px solid #ef4444;">
+      <div style="font-size: 2rem; text-align: center; margin-bottom: 0.5rem;">🚫</div>
+      <h3 style="font-size: 1.35rem; font-weight: 900; text-align: center; color: #b91c1c; margin: 0 0 0.5rem 0;">
+        Plan Blocked!
+      </h3>
+      <p id="blocked-proposer-line" style="text-align: center; font-size: 0.85rem; color: var(--ink-soft); margin-bottom: 1rem;">
+        Proposal was vetoed by a teammate's constraint.
+      </p>
+
+      <div style="background: #FEF2F2; border-radius: var(--radius-md); padding: 1rem; border: 1px solid #FCA5A5; margin-bottom: 1.25rem;">
+        <div id="blocked-who" style="font-weight: 800; color: #991B1B; font-size: 0.9rem; margin-bottom: 0.35rem;">Teammate's Constraint:</div>
+        <div id="blocked-reason" style="font-size: 0.95rem; color: #7F1D1D; line-height: 1.4;">Reason details...</div>
+      </div>
+
+      <button id="dismiss-blocked-btn" class="btn btn-primary" style="width: 100%; justify-content: center; padding: 0.85rem; background: #ef4444;">
+        Got it &bull; Continue Deliberation
+      </button>
+    </div>
+  </div>
+
+  <!-- Sockets & Client Logic -->
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/js/illustrations.js"></script>
+  <script>
+    // Register PWA Service Worker
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js').catch(() => {});
+      });
+    }
+
+    // Screen Wake Lock API to prevent mobile phone dimming during gameplay
+    let wakeLock = null;
+    async function requestWakeLock() {
+      try {
+        if ('wakeLock' in navigator) {
+          wakeLock = await navigator.wakeLock.request('screen');
+        }
+      } catch (err) {}
+    }
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible' && roleCard) {
+        requestWakeLock();
+      }
+    });
+
+    const socket = io();
+
+    // Connection Banner Handlers
+    const connBanner = document.getElementById('connection-banner');
+    socket.on('disconnect', () => {
+      if (connBanner) connBanner.classList.add('active');
+    });
+    socket.on('connect', () => {
+      if (connBanner) connBanner.classList.remove('active');
+      if (sessionCode && sessionToken) {
+        connectStudent();
+      }
+    });
+
+    // Client Session State
+    let sessionCode = null;
+    let sessionToken = localStorage.getItem('trip_student_token');
+    if (!sessionToken) {
+      sessionToken = `sst_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      localStorage.setItem('trip_student_token', sessionToken);
+    }
+    let nickname = null;
+    let currentGroupId = null;
+    let isReady = false;
+    let roleCard = null;
+    let dateRule = null;
+    let checkedDays = {}; // dayIndex -> { isAvailable, reason }
+    let destinations = [];
+    let activities = [];
+    let calendarDays = [];
+
+    // Switch Panel
+    function showPanel(panelId) {
+      document.querySelectorAll('.screen-panel').forEach(p => p.classList.remove('active'));
+      const target = document.getElementById(panelId);
+      if (target) target.classList.add('active');
+    }
+
+    // Parse URL params for auto-join (?code=TRIP&nick=Rahul)
+    const urlParams = new URLSearchParams(window.location.search);
+    const paramCode = urlParams.get('code') || urlParams.get('room');
+    const paramNick = urlParams.get('nick');
+
+    const savedCode = localStorage.getItem('trip_session_code');
+    const savedNick = localStorage.getItem('trip_nickname');
+
+    if (paramCode) {
+      sessionCode = paramCode.toUpperCase().trim();
+      document.getElementById('play-code-input').value = sessionCode;
+    } else if (savedCode) {
+      sessionCode = savedCode;
+      document.getElementById('play-code-input').value = sessionCode;
+    }
+
+    if (paramNick) {
+      nickname = paramNick.trim();
+      document.getElementById('play-nick-input').value = nickname;
+    } else if (savedNick) {
+      nickname = savedNick;
+      document.getElementById('play-nick-input').value = nickname;
+    }
+
+    // Auto-connect if code & nick exist
+    if (sessionCode && nickname) {
+      connectStudent();
+    }
+
+    function connectStudent() {
+      if (!sessionCode) return;
+      localStorage.setItem('trip_session_code', sessionCode);
+      if (nickname) localStorage.setItem('trip_nickname', nickname);
+      document.getElementById('header-nickname').textContent = `${nickname || 'Student'} • ${sessionCode}`;
+      socket.emit('student_join_session', {
+        sessionCode,
+        nickname: nickname || 'Traveler',
+        sessionToken
+      });
+    }
+
+    // Join Form Submit
+    document.getElementById('mobile-join-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      sessionCode = document.getElementById('play-code-input').value.trim().toUpperCase();
+      nickname = document.getElementById('play-nick-input').value.trim();
+      if (!sessionCode || !nickname) return;
+      connectStudent();
+    });
+
+    // Joined Session
+    socket.on('student_joined_session', ({ sessionCode: sc, openGroups, suggestedName }) => {
+      sessionCode = sc;
+      localStorage.setItem('trip_session_code', sessionCode);
+      showPanel('group-select-panel');
+      if (suggestedName) {
+        document.getElementById('create-group-name-input').value = suggestedName;
+      }
+      renderOpenGroups(openGroups);
+    });
+
+    // Round In Progress Lockout
+    socket.on('round_in_progress', () => {
+      showPanel('late-joiner-panel');
+    });
+
+    // Student Restored (Reconnect handling)
+    socket.on('student_restored', (data) => {
+      sessionCode = data.sessionCode;
+      nickname = data.nickname;
+      document.getElementById('header-nickname').textContent = `${nickname} &bull; ${sessionCode}`;
+
+      if (data.group) {
+        currentGroupId = data.group.groupId;
+        document.getElementById('header-group-name').textContent = data.group.name;
+        isReady = data.group.isReady;
+      }
+
+      if (data.phase === 'round' && data.roleCard) {
+        setupRoundGameplay(data);
+      } else if (data.phase === 'lobby' && data.group) {
+        showPanel('group-waiting-panel');
+        renderWaitingRoom(data.group);
+      } else if (data.hasRated) {
+        showPanel('waiting-reveal-panel');
+      } else if (data.phase === 'round' && data.submittedPlan) {
+        showPanel('survey-panel');
+      } else {
+        showPanel('group-select-panel');
+      }
+    });
+
+    // Render open groups list
+    function renderOpenGroups(groups) {
+      const container = document.getElementById('open-groups-list');
+      container.innerHTML = '';
+
+      if (!groups || groups.length === 0) {
+        container.innerHTML = `
+          <div style="text-align: center; color: var(--ink-soft); padding: 2rem 0; font-size: 0.9rem;">
+            No groups created yet. Be the first to start one!
+          </div>
+        `;
+        return;
+      }
+
+      groups.forEach(g => {
+        const item = document.createElement('div');
+        item.className = `group-join-card ${g.isFull ? 'full' : ''}`;
+        item.innerHTML = `
+          <div>
+            <strong style="font-size: 1.05rem;">${g.name}</strong>
+            <div style="font-size: 0.85rem; color: var(--ink-soft);">${g.memberCount}/6 members</div>
+          </div>
+          <button class="btn btn-secondary join-this-group-btn" data-id="${g.groupId}" ${g.isFull ? 'disabled' : ''} style="padding: 0.5rem 1rem; font-weight: 800;">
+            ${g.isFull ? 'Full' : 'Join'}
+          </button>
+        `;
+        container.appendChild(item);
+      });
+
+      container.querySelectorAll('.join-this-group-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const gId = e.currentTarget.getAttribute('data-id');
+          socket.emit('student_join_group', { sessionCode, groupId: gId, sessionToken });
+        });
+      });
+    }
+
+    socket.on('open_groups_updated', ({ openGroups }) => {
+      renderOpenGroups(openGroups);
+    });
+
+    // Create Group
+    document.getElementById('create-group-btn').addEventListener('click', () => {
+      const name = document.getElementById('create-group-name-input').value.trim();
+      socket.emit('student_create_group', { sessionCode, groupName: name, sessionToken });
+    });
+
+    // Group updated
+    socket.on('group_updated', (group) => {
+      currentGroupId = group.groupId;
+      document.getElementById('header-group-name').textContent = group.name;
+      showPanel('group-waiting-panel');
+      renderWaitingRoom(group);
+    });
+
+    function renderWaitingRoom(group) {
+      document.getElementById('waiting-group-title').textContent = group.name;
+      document.getElementById('waiting-member-count').textContent = `${group.memberCount} / 6 Members`;
+
+      const chips = document.getElementById('waiting-members-chips');
+      chips.innerHTML = '';
+      (group.members || []).forEach(m => {
+        const c = document.createElement('div');
+        c.style.cssText = `background: ${m.isReady ? '#dcfce7' : '#ffffff'}; border: 1.5px solid ${m.isReady ? '#10b981' : 'var(--border-color)'}; padding: 4px 10px; border-radius: 999px; font-size: 0.85rem; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;`;
+        c.innerHTML = `${m.isReady ? '✓' : '•'} ${m.nickname}`;
+        chips.appendChild(c);
+      });
+
+      const readyBtn = document.getElementById('toggle-ready-btn');
+      const box = document.getElementById('ready-status-box');
+
+      if (group.memberCount < 4) {
+        box.textContent = 'Waiting for at least 4 members to form a valid group.';
+        box.style.background = '#fef3c7';
+        box.style.color = '#92400e';
+      } else if (group.isReady) {
+        box.textContent = '✓ Group is ready! Waiting for teacher to start round...';
+        box.style.background = '#dcfce7';
+        box.style.color = '#15803d';
+      } else {
+        box.textContent = 'Tap Ready when your group is assembled at the table!';
+        box.style.background = '#fef3c7';
+        box.style.color = '#92400e';
+      }
+
+      // Find current student's ready state
+      const me = (group.members || []).find(m => m.nickname === nickname);
+      if (me && me.isReady) {
+        readyBtn.textContent = '✓ You are Ready (Tap to unready)';
+        readyBtn.style.background = '#dcfce7';
+        readyBtn.style.borderColor = '#10b981';
+      } else {
+        readyBtn.textContent = 'Tap to Mark Ready';
+        readyBtn.style.background = '#ffffff';
+        readyBtn.style.borderColor = 'var(--border-color)';
+      }
+    }
+
+    // Ready Toggle
+    document.getElementById('toggle-ready-btn').addEventListener('click', () => {
+      socket.emit('student_toggle_ready', { sessionCode, sessionToken });
+    });
+
+    // Leave Group
+    document.getElementById('leave-group-btn').addEventListener('click', () => {
+      socket.emit('student_leave_group', { sessionCode, sessionToken });
+    });
+
+    socket.on('student_left_group', ({ openGroups }) => {
+      currentGroupId = null;
+      document.getElementById('header-group-name').textContent = 'Plan a Trip';
+      showPanel('group-select-panel');
+      renderOpenGroups(openGroups);
+    });
+
+    // Reset to Lobby on New Round
+    socket.on('round_reset_to_lobby', ({ group }) => {
+      if (group) {
+        showPanel('group-waiting-panel');
+        renderWaitingRoom(group);
+      } else {
+        showPanel('group-select-panel');
+      }
+    });
+
+    // ================= ROUND START =================
+    socket.on('round_started', (data) => {
+      setupRoundGameplay(data);
+    });
+
+    function setupRoundGameplay(data) {
+      showPanel('round-panel');
+      requestWakeLock();
+      roleCard = data.roleCard;
+      dateRule = data.dateRule;
+      destinations = data.destinations || [];
+      activities = data.activities || [];
+      calendarDays = data.calendarDays || [];
+
+      document.getElementById('header-group-name').textContent = data.groupName || 'Team';
+      const rolePill = document.getElementById('header-role-pill');
+      rolePill.style.display = 'block';
+      rolePill.textContent = roleCard?.name || 'Traveler';
+
+      // Inject Role Avatar SVG
+      const avatarWrap = document.getElementById('player-avatar-container');
+      const svg = (window.PERSONA_SVGS && roleCard && window.PERSONA_SVGS[roleCard.name]) || `
+        <svg viewBox="0 0 160 160" width="100%" height="100%">
+          <circle cx="80" cy="80" r="70" fill="#EAF4FF" stroke="#0284C7" stroke-width="4"/>
+          <circle cx="80" cy="70" r="30" fill="#FDE68A"/>
+        </svg>
+      `;
+      avatarWrap.innerHTML = svg;
+
+      document.getElementById('player-role-title').textContent = roleCard?.name || 'Traveler';
+      document.getElementById('player-persona-name').textContent = roleCard?.personaName || '';
+
+      // Constraints list
+      const cList = document.getElementById('player-constraints-list');
+      cList.innerHTML = (roleCard?.constraints || []).map(c => `<div>&bull; ${c}</div>`).join('');
+
+      // Petty excuse
+      const excuse = roleCard?.pettyExcuse || (roleCard?.constraints && roleCard.constraints[roleCard.constraints.length - 1]) || 'No petty excuse';
+      document.getElementById('player-petty-excuse').textContent = `"${excuse}"`;
+
+      // Budget Bar
+      const budget = roleCard?.personalBudget || { min: 4000, max: 9000 };
+      document.getElementById('player-budget-text').textContent = `₹${budget.min.toLocaleString('en-IN')} – ₹${budget.max.toLocaleString('en-IN')}`;
+      const minPercent = Math.max(0, (budget.min / 16000) * 100);
+      const widthPercent = Math.min(100, ((budget.max - budget.min) / 16000) * 100);
+      const fill = document.getElementById('player-budget-fill');
+      fill.style.left = `${minPercent}%`;
+      fill.style.width = `${widthPercent}%`;
+
+      // Populate Calendar Days
+      buildCalendarGrid(calendarDays);
+
+      // Populate Propose selects
+      populateProposeSelects();
+    }
+
+    // Build Calendar Grid (28 Days)
+    function buildCalendarGrid(days) {
+      const cont = document.getElementById('calendar-days-container');
+      cont.innerHTML = '';
+      (days || []).forEach(d => {
+        const cell = document.createElement('div');
+        cell.className = 'cal-day-cell';
+        cell.textContent = d.dayOfMonth;
+        cell.setAttribute('data-day', d.dayIndex);
+
+        if (checkedDays[d.dayIndex]) {
+          const res = checkedDays[d.dayIndex];
+          cell.classList.add(res.isAvailable ? 'available' : 'unavailable');
+        }
+
+        cell.addEventListener('click', () => {
+          socket.emit('check_player_date', {
+            sessionCode,
+            sessionToken,
+            dayIndex: d.dayIndex,
+            dateString: d.dateString
+          });
+        });
+        cont.appendChild(cell);
+      });
+    }
+
+    // Date checked result (strictly private to this phone!)
+    socket.on('player_date_checked', ({ dayIndex, dateString, isAvailable, reason }) => {
+      checkedDays[dayIndex] = { isAvailable, reason };
+      const cell = document.querySelector(`.cal-day-cell[data-day="${dayIndex}"]`);
+      if (cell) {
+        cell.classList.remove('available', 'unavailable');
+        cell.classList.add(isAvailable ? 'available' : 'unavailable');
+      }
+
+      const toast = document.getElementById('calendar-reason-toast');
+      toast.style.display = 'block';
+      toast.innerHTML = `
+        <strong>Day ${dayIndex + 1} (${dateString}):</strong> ${isAvailable ? '✓ Available for you!' : '✗ Unavailable: ' + reason}
+      `;
+    });
+
+    // Open / Close Calendar
+    document.getElementById('open-calendar-btn').addEventListener('click', () => {
+      document.getElementById('calendar-modal').classList.add('active');
+    });
+    document.getElementById('close-calendar-btn').addEventListener('click', () => {
+      document.getElementById('calendar-modal').classList.remove('active');
+    });
+
+    // Populate Propose dropdowns
+    function populateProposeSelects() {
+      const destSelect = document.getElementById('plan-dest-select');
+      destSelect.innerHTML = destinations.map(d => `<option value="${d.name}">${d.name} (${d.tier || 'Popular'})</option>`).join('');
+
+      const actSelect = document.getElementById('plan-activity-select');
+      actSelect.innerHTML = activities.map(a => `<option value="${a.name}">${a.name}</option>`).join('');
+
+      // Generate date windows (3 to 5 day windows)
+      const dateSelect = document.getElementById('plan-date-select');
+      const windows = [
+        { start: 'Day 5', end: 'Day 8' },
+        { start: 'Day 12', end: 'Day 15' },
+        { start: 'Day 19', end: 'Day 22' },
+        { start: 'Day 25', end: 'Day 28' },
+        { start: 'Day 7', end: 'Day 10' },
+        { start: 'Day 14', end: 'Day 18' }
+      ];
+      dateSelect.innerHTML = windows.map(w => `<option value="${w.start} to ${w.end}">${w.start} &rarr; ${w.end}</option>`).join('');
+    }
+
+    // Open / Close Propose Modal
+    document.getElementById('open-propose-btn').addEventListener('click', () => {
+      document.getElementById('propose-modal').classList.add('active');
+    });
+    document.getElementById('close-propose-btn').addEventListener('click', () => {
+      document.getElementById('propose-modal').classList.remove('active');
+    });
+
+    // Submit Plan Proposal
+    document.getElementById('plan-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const dest = document.getElementById('plan-dest-select').value;
+      const dateVal = document.getElementById('plan-date-select').value.split(' to ');
+      const trans = document.getElementById('plan-transport-select').value;
+      const act = document.getElementById('plan-activity-select').value;
+
+      const plan = {
+        destination: dest,
+        startDate: dateVal[0],
+        endDate: dateVal[1],
+        transportMode: trans,
+        activities: [act]
+      };
+
+      socket.emit('submit_group_plan', {
+        sessionCode,
+        sessionToken,
+        plan
+      });
+
+      document.getElementById('propose-modal').classList.remove('active');
+    });
+
+    // Group plan blocked reason popup
+    socket.on('group_plan_blocked', ({ proposerNick, blockedByNickname, reason }) => {
+      document.getElementById('blocked-proposer-line').textContent = `Proposal by ${proposerNick} was vetoed:`;
+      document.getElementById('blocked-who').textContent = `${blockedByNickname}'s Constraint:`;
+      document.getElementById('blocked-reason').textContent = reason || 'Conflict with personal schedule or budget.';
+      document.getElementById('blocked-modal').classList.add('active');
+    });
+
+    document.getElementById('dismiss-blocked-btn').addEventListener('click', () => {
+      document.getElementById('blocked-modal').classList.remove('active');
+    });
+
+    // Group plan locked! (Early lock -> Jump to survey immediately!)
+    socket.on('group_plan_locked', () => {
+      document.getElementById('survey-header-title').textContent = '🎉 Trip Locked!';
+      showPanel('survey-panel');
+    });
+
+    // Time's Up (Timer expired -> lock phone & show survey)
+    socket.on('round_ended_times_up', () => {
+      document.getElementById('survey-header-title').textContent = '⏰ Time\'s Up!';
+      showPanel('survey-panel');
+    });
+
+    // Check if player has twist
+    socket.on('twist_fired', ({ twist }) => {
+      if (twist && (twist.targetPlayerSocketId === socket.id || twist.targetPlayerSocketId === sessionToken)) {
+        document.getElementById('twist-disclosure-group').style.display = 'block';
+      }
+    });
+
+    // Submit Survey Responses
+    document.getElementById('rating-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const sat = document.querySelector('input[name="satisfaction"]:checked')?.value || '4';
+      const heard = document.querySelector('input[name="feltHeard"]:checked')?.value || 'yes';
+      const conflict = document.getElementById('conflict-source-select').value;
+      const twist = document.querySelector('input[name="disclosedTwist"]:checked')?.value || 'no';
+
+      socket.emit('submit_student_rating', {
+        sessionCode,
+        sessionToken,
+        satisfaction: parseInt(sat, 10),
+        feltHeard: heard === 'yes',
+        conflictSource: conflict,
+        disclosedTwist: twist === 'yes'
+      });
+
+      showPanel('waiting-reveal-panel');
+    });
+  </script>
+</body>
+</html>

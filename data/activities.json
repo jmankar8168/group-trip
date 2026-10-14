@@ -1,0 +1,107 @@
+[
+  {
+    "id": "beach_day",
+    "name": "Beach Day",
+    "emoji": "🏖️",
+    "tags": ["beach", "open_sun", "water", "heat"],
+    "description": "Lazing by the coast, sand, and ocean waves under the open sun."
+  },
+  {
+    "id": "trekking",
+    "name": "Trekking",
+    "emoji": "🥾",
+    "tags": ["trekking", "mud", "physical", "public_washroom_risk", "backpacking", "sunrise"],
+    "description": "Trail hiking across slopes, rugged terrain, and dirt paths."
+  },
+  {
+    "id": "rafting",
+    "name": "Rafting",
+    "emoji": "🛶",
+    "tags": ["rafting", "water_sports", "mud", "water", "swimming_risk"],
+    "description": "Whitewater rapids and river descent with paddle teams."
+  },
+  {
+    "id": "sightseeing",
+    "name": "Sightseeing",
+    "emoji": "📷",
+    "tags": ["sightseeing", "scenic", "leisure", "photo_friendly"],
+    "description": "Visiting panoramic viewpoints, gardens, and city landmarks."
+  },
+  {
+    "id": "heritage_walk",
+    "name": "Heritage Walk",
+    "emoji": "🏛️",
+    "tags": ["heritage", "temples_forts", "dusty", "culture", "walking"],
+    "description": "Exploring ancient forts, historical stone monuments, and temple alleys."
+  },
+  {
+    "id": "wildlife_safari",
+    "name": "Wildlife Safari",
+    "emoji": "🐅",
+    "tags": ["wildlife_safari", "forest", "jungle", "mosquitoes", "outdoor"],
+    "description": "Open jeep safari through national park reserves spotting flora and fauna."
+  },
+  {
+    "id": "camping",
+    "name": "Camping",
+    "emoji": "⛺",
+    "tags": ["camping", "mud", "mosquitoes", "public_washroom_risk", "outdoor", "backpacking"],
+    "description": "Tent stay under the starry sky, campfire stories, and outdoor gear."
+  },
+  {
+    "id": "cafe_hopping",
+    "name": "Cafe Hopping",
+    "emoji": "☕",
+    "tags": ["cafe_hopping", "city", "ac_friendly", "leisure", "photo_friendly", "clean_washroom"],
+    "description": "Visiting artisanal coffee shops, bakeries, and aesthetic indoor bistros."
+  },
+  {
+    "id": "spa_wellness",
+    "name": "Spa and Wellness",
+    "emoji": "💆",
+    "tags": ["spa_wellness", "relaxation", "ac_friendly", "luxury", "transfer_service"],
+    "description": "Ayurvedic massage therapies, steam baths, and holistic rejuvenating retreats."
+  },
+  {
+    "id": "nightlife",
+    "name": "Nightlife",
+    "emoji": "🎉",
+    "tags": ["nightlife", "music", "clubs", "late_night"],
+    "description": "Live lounges, beach clubs, pub crawls, and dance floors."
+  },
+  {
+    "id": "water_sports",
+    "name": "Water Sports",
+    "emoji": "🏄",
+    "tags": ["water_sports", "water", "open_sun", "swimming_risk"],
+    "description": "Jet skiing, banana boat rides, parasailing, and scuba diving."
+  },
+  {
+    "id": "road_trip",
+    "name": "Road Trip",
+    "emoji": "🚗",
+    "tags": ["road_trip", "driving", "scenic", "travel"],
+    "description": "Scenic highway cruise with roadside stops, music playlists, and dhaba chai."
+  },
+  {
+    "id": "hill_stroll",
+    "name": "Hill Station Stroll",
+    "emoji": "🌲",
+    "tags": ["hill_stroll", "mild_weather", "scenic", "photo_friendly", "walking"],
+    "description": "Brisk walks through pine lanes, misty tea gardens, and colonial promenades."
+  },
+  {
+    "id": "cultural_festival",
+    "name": "Cultural Festival",
+    "emoji": "🪔",
+    "tags": ["cultural_festival", "culture", "music", "events"],
+    "description": "Experiencing local regional fairs, dance spectacles, and artisan markets."
+  },
+  {
+    "id": "food_trail",
+    "name": "Food Trail",
+    "emoji": "🍲",
+    "tags": ["food_trail", "food", "dining", "city", "proper_veg_options"],
+    "description": "Tasting signature local culinary delicacies, street chaat, and historic sweets."
+  }
+]

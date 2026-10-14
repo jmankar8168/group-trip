@@ -1,0 +1,1439 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Host Projector - Plan a Trip in 2 Minutes</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    /* Fullscreen Projector Layout (1920x1080 optimized) */
+    body {
+      background-color: var(--bg-fog, #ECEAEA);
+      color: var(--ink, #111111);
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+      overflow-x: hidden;
+    }
+
+    .projector-container {
+      width: 100%;
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 1.5rem 2rem 3rem 2rem;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Views */
+    .view-section {
+      display: none;
+      width: 100%;
+      flex: 1;
+    }
+    .view-section.active {
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* 1. Setup View */
+    .setup-card {
+      background: var(--surface, #ffffff);
+      border: 1.5px solid var(--border-color, #e5e7eb);
+      border-radius: var(--radius-xl, 24px);
+      padding: 3rem;
+      max-width: 760px;
+      margin: 2rem auto;
+      box-shadow: 0 12px 36px rgba(0,0,0,0.06);
+    }
+    .pill-group {
+      display: flex;
+      gap: 0.75rem;
+      margin-top: 0.5rem;
+      flex-wrap: wrap;
+    }
+    .pill-opt {
+      padding: 0.75rem 1.4rem;
+      border-radius: var(--radius-full, 9999px);
+      border: 2px solid var(--border-color, #e5e7eb);
+      background: var(--surface, #ffffff);
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-size: 0.95rem;
+    }
+    .pill-opt.selected {
+      border-color: var(--primary, #0FA37F);
+      background: var(--primary-light, #E3F7EA);
+      color: var(--primary, #0FA37F);
+    }
+
+    /* 2. Lobby View */
+    .lobby-header-grid {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 2.5rem;
+      margin-top: 1rem;
+      align-items: start;
+    }
+    .qr-hero-card {
+      background: var(--surface, #ffffff);
+      border: 2px solid var(--border-color, #e5e7eb);
+      border-radius: var(--radius-xl, 24px);
+      padding: 2rem;
+      text-align: center;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.04);
+    }
+    .room-code-giant {
+      font-family: monospace;
+      font-size: 3.8rem;
+      font-weight: 900;
+      letter-spacing: 0.2em;
+      color: var(--primary, #0FA37F);
+      margin: 0.5rem 0 1rem 0;
+      line-height: 1;
+    }
+    .groups-container {
+      background: var(--surface, #ffffff);
+      border: 2px solid var(--border-color, #e5e7eb);
+      border-radius: var(--radius-xl, 24px);
+      padding: 2rem;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.04);
+    }
+    .groups-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 1.25rem;
+      margin-top: 1.25rem;
+      max-height: 480px;
+      overflow-y: auto;
+      padding-right: 0.5rem;
+    }
+    .group-card {
+      background: var(--bg-fog, #f8fafc);
+      border: 1.5px solid var(--border-color, #e2e8f0);
+      border-radius: var(--radius-lg, 16px);
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all 0.2s ease;
+    }
+    .group-card.ready {
+      border-color: #10b981;
+      background: #f0fdf4;
+    }
+    .group-card.excluded {
+      opacity: 0.45;
+      text-decoration: line-through;
+    }
+
+    /* 3. Round Projector View (Matching Approved Mockup) */
+    .round-content-centered {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      max-width: 1100px;
+      margin: 0 auto;
+      width: 100%;
+      text-align: center;
+      flex: 1;
+      padding: 1rem 0;
+    }
+    .phase-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: #EAF4FF;
+      color: #0284C7;
+      font-weight: 800;
+      font-size: 0.9rem;
+      padding: 0.45rem 1.25rem;
+      border-radius: var(--radius-full, 9999px);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 0.75rem;
+    }
+    .phase-pill::before {
+      content: '';
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #0284C7;
+      animation: pulse 1.5s infinite;
+    }
+    .round-title {
+      font-size: 2.75rem;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      margin: 0 0 0.4rem 0;
+      color: var(--ink, #111111);
+    }
+    .round-subtext {
+      font-size: 1.15rem;
+      color: var(--ink-soft, #64748b);
+      margin: 0 0 2rem 0;
+      max-width: 650px;
+    }
+
+    /* Big Circular Timer */
+    .circle-timer-wrap {
+      position: relative;
+      width: 190px;
+      height: 190px;
+      margin: 0 auto 2.25rem auto;
+    }
+    .circle-timer-svg {
+      transform: rotate(-90deg);
+      width: 190px;
+      height: 190px;
+    }
+    .circle-timer-bg {
+      stroke: #e2e8f0;
+      stroke-width: 10;
+      fill: none;
+    }
+    .circle-timer-progress {
+      stroke: var(--primary, #0FA37F);
+      stroke-width: 10;
+      fill: none;
+      stroke-linecap: round;
+      stroke-dasharray: 534;
+      stroke-dashoffset: 0;
+      transition: stroke-dashoffset 1s linear, stroke 0.3s ease;
+    }
+    .circle-timer-digits {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-family: monospace;
+      font-size: 3.2rem;
+      font-weight: 900;
+      color: var(--ink, #111111);
+      line-height: 1;
+    }
+
+    /* 4 Task Cards in a row */
+    .tasks-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.5rem;
+      width: 100%;
+      margin-bottom: 2rem;
+    }
+    .task-card {
+      background: var(--surface, #ffffff);
+      border: 1.5px solid var(--border-color, #e2e8f0);
+      border-radius: var(--radius-xl, 20px);
+      padding: 1.5rem 1.25rem;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.03);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: all 0.25s ease;
+    }
+    .task-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 24px rgba(0,0,0,0.06);
+    }
+    .task-icon-circle {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: var(--primary-light, #E3F7EA);
+      color: var(--primary, #0FA37F);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+      margin-bottom: 0.75rem;
+    }
+    .task-title {
+      font-weight: 800;
+      font-size: 1.1rem;
+      margin-bottom: 0.25rem;
+    }
+    .task-desc {
+      font-size: 0.85rem;
+      color: var(--ink-soft, #64748b);
+      line-height: 1.4;
+    }
+
+    /* 3 Twist Chips at bottom */
+    .twists-bottom-row {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      width: 100%;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+    .twist-chip {
+      background: var(--surface, #ffffff);
+      border: 1.5px dashed var(--border-color, #cbd5e1);
+      border-radius: var(--radius-full, 9999px);
+      padding: 0.65rem 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--ink-soft, #64748b);
+      transition: all 0.35s ease;
+    }
+    .twist-chip.active {
+      border: 2px solid #f59e0b;
+      background: #fffbeb;
+      color: #b45309;
+      box-shadow: 0 4px 14px rgba(245, 158, 11, 0.2);
+      transform: scale(1.04);
+    }
+    .twist-chip-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #cbd5e1;
+    }
+    .twist-chip.active .twist-chip-dot {
+      background: #f59e0b;
+      animation: pulse 1.2s infinite;
+    }
+
+    /* Quiet Progress Strip */
+    .quiet-progress-strip {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+      background: var(--surface, #ffffff);
+      border: 1px solid var(--border-color, #e2e8f0);
+      border-radius: var(--radius-full, 9999px);
+      padding: 0.6rem 1.5rem;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--ink-soft, #64748b);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+    }
+    .quiet-progress-bar-wrap {
+      width: 120px;
+      height: 6px;
+      background: #e2e8f0;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+    .quiet-progress-bar-fill {
+      height: 100%;
+      background: var(--primary, #0FA37F);
+      width: 0%;
+      transition: width 0.4s ease;
+    }
+
+    /* 4. Host Controls Tray (Discreet / Hover / Tap) */
+    .host-controls-tray {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 2rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      background: rgba(17, 17, 17, 0.92);
+      backdrop-filter: blur(8px);
+      padding: 0.6rem 1rem;
+      border-radius: var(--radius-full, 9999px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+      opacity: 0.25;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+      z-index: 1000;
+    }
+    .host-controls-tray:hover {
+      opacity: 1;
+      transform: translateY(-2px);
+    }
+    .tray-btn {
+      background: transparent;
+      border: none;
+      color: #ffffff;
+      padding: 0.4rem 0.75rem;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: background 0.2s ease;
+    }
+    .tray-btn:hover {
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    /* 5. Results Board Presentation Slides */
+    .results-slider-wrap {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .collecting-banner {
+      background: #FEF3C7;
+      border: 1.5px solid #F59E0B;
+      color: #92400E;
+      border-radius: var(--radius-lg, 16px);
+      padding: 1rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+      font-weight: 700;
+      animation: popIn 0.3s ease;
+    }
+    .slides-deck {
+      position: relative;
+      flex: 1;
+      min-height: 540px;
+    }
+    .slide-item {
+      display: none;
+      animation: fadeIn 0.4s ease;
+      width: 100%;
+      height: 100%;
+    }
+    .slide-item.active {
+      display: flex;
+      flex-direction: column;
+    }
+    .slide-nav-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 1.5rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border-color, #e2e8f0);
+    }
+    .slide-dots {
+      display: flex;
+      gap: 0.5rem;
+    }
+    .slide-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #cbd5e1;
+      cursor: pointer;
+      transition: all 0.25s ease;
+    }
+    .slide-dot.active {
+      width: 28px;
+      border-radius: 10px;
+      background: var(--primary, #0FA37F);
+    }
+    .stat-hero-big {
+      font-size: 5.5rem;
+      font-weight: 900;
+      letter-spacing: -0.04em;
+      line-height: 1;
+      color: var(--primary, #0FA37F);
+      margin: 1rem 0 0.5rem 0;
+    }
+    .leaderboard-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0 0.6rem;
+    }
+    .leaderboard-row {
+      background: var(--surface, #ffffff);
+      border-radius: var(--radius-md, 12px);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+    .leaderboard-row:hover {
+      transform: translateY(-2px);
+    }
+    .leaderboard-cell {
+      padding: 1rem 1.25rem;
+      font-weight: 600;
+    }
+    .verdict-chip {
+      display: inline-block;
+      padding: 0.35rem 0.85rem;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 800;
+    }
+    .verdict-happy { background: #dcfce7; color: #15803d; }
+    .verdict-compromise { background: #fef3c7; color: #b45309; }
+    .verdict-failed { background: #fee2e2; color: #b91c1c; }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.9); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="projector-container">
+
+    <!-- 1. SETUP VIEW -->
+    <section id="setup-view" class="view-section active">
+      <div class="setup-card">
+        <span class="card-badge" style="background: var(--primary-light); color: var(--primary); margin-bottom: 0.75rem;">
+          Host Projector Configuration
+        </span>
+        <h1 style="font-size: 2.25rem; font-weight: 900; margin-bottom: 0.5rem;">Setup Classroom Session</h1>
+        <p style="color: var(--ink-soft); font-size: 1.05rem; margin-bottom: 2rem;">
+          Configure your class round parameters. All student groups will deliberate simultaneously under this shared clock.
+        </p>
+
+        <!-- Difficulty -->
+        <div style="margin-bottom: 1.75rem;">
+          <label style="font-weight: 800; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-soft);">
+            Round Difficulty (Golden Date Windows)
+          </label>
+          <div class="pill-group" id="difficulty-pills">
+            <button type="button" class="pill-opt" data-val="easy">Easy (4 Golden Dates)</button>
+            <button type="button" class="pill-opt selected" data-val="medium">Medium (2–3 Golden Dates)</button>
+            <button type="button" class="pill-opt" data-val="hard">Hard (1 Golden Date)</button>
+          </div>
+        </div>
+
+        <!-- Timer Duration -->
+        <div style="margin-bottom: 1.75rem;">
+          <label style="font-weight: 800; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-soft);">
+            Deliberation Timer Duration
+          </label>
+          <div class="pill-group" id="duration-pills">
+            <button type="button" class="pill-opt" data-val="120">2:00 Min</button>
+            <button type="button" class="pill-opt" data-val="150">2:30 Min</button>
+            <button type="button" class="pill-opt selected" data-val="180">3:00 Min (Default)</button>
+            <button type="button" class="pill-opt" data-val="240">4:00 Min</button>
+            <button type="button" class="pill-opt" data-val="300">5:00 Min</button>
+          </div>
+        </div>
+
+        <!-- Date Reason Setting -->
+        <div style="margin-bottom: 2rem;">
+          <label style="font-weight: 800; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-soft);">
+            Date Conflict Feedback Mode
+          </label>
+          <div class="pill-group" id="reason-pills">
+            <button type="button" class="pill-opt selected" data-val="mandatory">Mandatory Reason Popups</button>
+            <button type="button" class="pill-opt" data-val="optional">Optional Reasons</button>
+            <button type="button" class="pill-opt" data-val="hidden">Hidden Reasons</button>
+          </div>
+        </div>
+
+        <!-- Open Lobby Action -->
+        <button id="open-lobby-btn" class="btn btn-primary" style="width: 100%; justify-content: center; padding: 1.1rem; font-size: 1.15rem; font-weight: 800; border-radius: var(--radius-md);">
+          Open Lobby &rarr;
+        </button>
+
+        <!-- Hidden Practice Link for Testing (as requested by user) -->
+        <div style="text-align: center; margin-top: 1.5rem;">
+          <button id="practice-bots-link" type="button" style="background: none; border: none; color: #94a3b8; font-size: 0.85rem; cursor: pointer; text-decoration: underline;">
+            Practice test mode: test with simulated bot groups
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. LOBBY VIEW (PROJECTOR) -->
+    <section id="lobby-view" class="view-section">
+      <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 1.5rem;">
+        <div>
+          <span class="phase-pill">Lobby Open</span>
+          <h1 style="font-size: 2.5rem; font-weight: 900; margin: 0 0 0.25rem 0;">Scan to Join Class Session</h1>
+          <p style="color: var(--ink-soft); font-size: 1.1rem; margin: 0;">
+            Students: scan the QR code or enter the code at <strong id="lobby-join-url" style="color: var(--ink); text-decoration: underline;">.../play.html</strong>
+          </p>
+        </div>
+        <div style="display: flex; gap: 1rem; align-items: center;">
+          <div style="text-align: right;">
+            <div style="font-size: 0.85rem; font-weight: 800; text-transform: uppercase; color: var(--ink-soft);">Total Players</div>
+            <div id="lobby-player-count" style="font-size: 1.8rem; font-weight: 900; color: var(--primary);">0</div>
+          </div>
+          <div style="width: 1px; height: 36px; background: var(--border-color);"></div>
+          <div style="text-align: right;">
+            <div style="font-size: 0.85rem; font-weight: 800; text-transform: uppercase; color: var(--ink-soft);">Ready Groups</div>
+            <div id="lobby-ready-count" style="font-size: 1.8rem; font-weight: 900; color: #0284c7;">0 / 0</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="lobby-header-grid">
+        <!-- Giant QR & Code Card -->
+        <div class="qr-hero-card">
+          <div style="font-size: 0.85rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-soft);">
+            Session Join Code
+          </div>
+          <div id="lobby-session-code" class="room-code-giant">----</div>
+
+          <div style="background: #ffffff; padding: 0.5rem; border-radius: var(--radius-md); display: inline-block; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 1rem;">
+            <img id="lobby-qr-img" src="" alt="Session QR" style="width: 180px; height: 180px; display: block;">
+          </div>
+          <div style="font-size: 0.9rem; color: var(--ink-soft); line-height: 1.4;">
+            Point your phone camera to join and choose your team!
+          </div>
+        </div>
+
+        <!-- Groups List Card -->
+        <div class="groups-container">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h2 style="font-size: 1.35rem; font-weight: 800; margin: 0;">Student Groups Forming</h2>
+            <span style="font-size: 0.9rem; color: var(--ink-soft);">Group size: 4–6 players</span>
+          </div>
+
+          <div id="groups-grid" class="groups-grid">
+            <!-- Populated live via sockets -->
+            <div style="grid-column: 1 / -1; text-align: center; padding: 4rem 1rem; color: var(--ink-soft);">
+              Waiting for students to join and form groups...
+            </div>
+          </div>
+
+          <div style="margin-top: 1.75rem; padding-top: 1.25rem; border-top: 1.5px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
+            <div style="font-size: 0.95rem; color: var(--ink-soft);" id="start-round-hint">
+              Need at least 2 ready groups to start the round.
+            </div>
+            <button id="start-round-btn" class="btn btn-primary" style="padding: 0.9rem 2rem; font-size: 1.1rem; font-weight: 800; border-radius: var(--radius-md);" disabled>
+              Start Round &rarr;
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. ROUND VIEW (PROJECTOR - STRICT PINK CROSS REMOVALS) -->
+    <section id="round-view" class="view-section">
+      <div class="round-content-centered">
+        <!-- Small phase pill -->
+        <span class="phase-pill">Live deliberation</span>
+
+        <!-- Heading & subtext -->
+        <h1 class="round-title">Can You Find the Common Ground?</h1>
+        <p class="round-subtext">
+          Collaborate within your group to discover dates, destinations, transport, and activities that work for everyone.
+        </p>
+
+        <!-- ONE Large Circular Countdown Timer (No duplicates anywhere) -->
+        <div class="circle-timer-wrap">
+          <svg class="circle-timer-svg" viewBox="0 0 190 190">
+            <circle class="circle-timer-bg" cx="95" cy="95" r="85"></circle>
+            <circle id="timer-arc" class="circle-timer-progress" cx="95" cy="95" r="85"></circle>
+          </svg>
+          <div class="circle-timer-digits" id="round-timer-digits">03:00</div>
+        </div>
+
+        <!-- 4 Task Cards in a row -->
+        <div class="tasks-row">
+          <div class="task-card">
+            <div class="task-icon-circle">📍</div>
+            <div class="task-title">Destination</div>
+            <div class="task-desc">Choose a getaway that fits everyone’s private vibe and travel tolerance.</div>
+          </div>
+          <div class="task-card">
+            <div class="task-icon-circle">📅</div>
+            <div class="task-title">Dates</div>
+            <div class="task-desc">Discover the secret date window where no one's calendar has a conflict.</div>
+          </div>
+          <div class="task-card">
+            <div class="task-icon-circle">🚗</div>
+            <div class="task-title">Transport</div>
+            <div class="task-desc">Select transport that respects health limits and transit preferences.</div>
+          </div>
+          <div class="task-card">
+            <div class="task-icon-circle">🏄</div>
+            <div class="task-title">Main Activity</div>
+            <div class="task-desc">Pick activities that avoid personal phobias and petty pet peeves.</div>
+          </div>
+        </div>
+
+        <!-- 3 Twist Chips at Bottom -->
+        <div class="twists-bottom-row">
+          <div id="twist-chip-1" class="twist-chip">
+            <div class="twist-chip-dot"></div>
+            <span>Twist 1 (3/4 time): Budget Squeeze</span>
+          </div>
+          <div id="twist-chip-2" class="twist-chip">
+            <div class="twist-chip-dot"></div>
+            <span>Twist 2 (1/2 time): Sick Leave Shock</span>
+          </div>
+          <div id="twist-chip-3" class="twist-chip">
+            <div class="twist-chip-dot"></div>
+            <span>Twist 3 (1/4 time): Surprise Event</span>
+          </div>
+        </div>
+
+        <!-- Quiet Progress Strip: count only, no names, no validity hints -->
+        <div class="quiet-progress-strip">
+          <div class="quiet-progress-bar-wrap">
+            <div id="quiet-progress-fill" class="quiet-progress-bar-fill"></div>
+          </div>
+          <span id="quiet-progress-text">0 of 0 groups have submitted a plan</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. RESULTS VIEW (PROJECTOR) -->
+    <section id="results-view" class="view-section">
+      <div class="results-slider-wrap">
+        <!-- Visible response collection banner -->
+        <div id="collecting-banner" class="collecting-banner" style="display: none;">
+          <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <span style="font-size: 1.25rem;">⏳</span>
+            <span id="collecting-banner-text">Collecting post-round responses, 0/0 in...</span>
+          </div>
+          <button id="show-results-now-btn" class="btn btn-secondary" style="padding: 0.4rem 1rem; font-size: 0.85rem; background: #ffffff; border: 1px solid #F59E0B; color: #92400E;">
+            Reveal Results Now &rarr;
+          </button>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+          <span class="phase-pill" style="margin-bottom: 0;">Class Debrief Board</span>
+          <div style="display: flex; gap: 0.5rem;">
+            <button id="auto-cycle-btn" class="btn btn-secondary" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;">
+              ⏸️ Pause Slideshow
+            </button>
+          </div>
+        </div>
+
+        <!-- Slides Deck -->
+        <div class="slides-deck">
+
+          <!-- Slide 1: Headline numbers -->
+          <div class="slide-item active" id="slide-1">
+            <div style="text-align: center; padding: 2rem 0;">
+              <span class="card-badge" style="background: var(--primary-light); color: var(--primary); margin: 0 auto 0.75rem auto;">
+                Slide 1 of 5 &bull; The Bottom Line
+              </span>
+              <h2 style="font-size: 2.25rem; font-weight: 900; margin-bottom: 0.5rem;">Class Deliberation Outcome</h2>
+              <div class="stat-hero-big" id="res-success-rate">0%</div>
+              <p style="font-size: 1.4rem; font-weight: 700; color: var(--ink); margin: 0 0 2rem 0;" id="res-headline-subline">
+                0 of 0 groups planned a trip.
+              </p>
+
+              <div style="display: flex; justify-content: center; gap: 3rem; margin-top: 1rem;">
+                <div style="background: var(--surface); padding: 1.25rem 2rem; border-radius: var(--radius-lg); border: 1px solid var(--border-color);">
+                  <div style="font-size: 0.9rem; font-weight: 800; color: var(--ink-soft); text-transform: uppercase;">Total Groups</div>
+                  <div id="res-total-groups" style="font-size: 2.2rem; font-weight: 900; color: var(--ink);">0</div>
+                </div>
+                <div style="background: var(--surface); padding: 1.25rem 2rem; border-radius: var(--radius-lg); border: 1px solid var(--border-color);">
+                  <div style="font-size: 0.9rem; font-weight: 800; color: var(--ink-soft); text-transform: uppercase;">Total Students</div>
+                  <div id="res-total-players" style="font-size: 2.2rem; font-weight: 900; color: var(--ink);">0</div>
+                </div>
+                <div style="background: var(--surface); padding: 1.25rem 2rem; border-radius: var(--radius-lg); border: 1px solid var(--border-color);">
+                  <div style="font-size: 0.9rem; font-weight: 800; color: var(--ink-soft); text-transform: uppercase;">Locked Valid Plans</div>
+                  <div id="res-locked-count" style="font-size: 2.2rem; font-weight: 900; color: var(--primary);">0</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 2: Group Leaderboard -->
+          <div class="slide-item" id="slide-2">
+            <div>
+              <span class="card-badge" style="background: var(--primary-light); color: var(--primary); margin-bottom: 0.75rem;">
+                Slide 2 of 5 &bull; Team Results
+              </span>
+              <h2 style="font-size: 2rem; font-weight: 900; margin: 0 0 0.5rem 0;">Group Leaderboard</h2>
+              <p style="color: var(--ink-soft); font-size: 0.95rem; margin-bottom: 1.25rem;">
+                Ranked by outcome and speed. Tap any group row to reveal that group's hidden golden date windows.
+              </p>
+
+              <div style="max-height: 400px; overflow-y: auto; padding-right: 0.5rem;">
+                <table class="leaderboard-table">
+                  <thead>
+                    <tr style="color: var(--ink-soft); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em;">
+                      <th style="text-align: left; padding: 0.5rem 1rem;">Group</th>
+                      <th style="text-align: left; padding: 0.5rem 1rem;">Outcome</th>
+                      <th style="text-align: left; padding: 0.5rem 1rem;">Time Taken</th>
+                      <th style="text-align: left; padding: 0.5rem 1rem;">Blocked Plans</th>
+                      <th style="text-align: left; padding: 0.5rem 1rem;">Avg Satisfaction</th>
+                      <th style="text-align: left; padding: 0.5rem 1rem;">Verdict</th>
+                    </tr>
+                  </thead>
+                  <tbody id="leaderboard-tbody">
+                    <!-- Populated dynamically -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 3: Where groups got stuck -->
+          <div class="slide-item" id="slide-3">
+            <div>
+              <span class="card-badge" style="background: var(--primary-light); color: var(--primary); margin-bottom: 0.75rem;">
+                Slide 3 of 5 &bull; Failure Points
+              </span>
+              <h2 style="font-size: 2rem; font-weight: 900; margin: 0 0 0.5rem 0;">Where Groups Got Stuck</h2>
+              <p style="color: var(--ink-soft); font-size: 0.95rem; margin-bottom: 1.5rem;">
+                Breakdown of constraints that triggered plan rejections across the room.
+              </p>
+
+              <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 2rem; align-items: start;">
+                <!-- Category Bars -->
+                <div style="background: var(--surface); padding: 1.75rem; border-radius: var(--radius-xl); border: 1.5px solid var(--border-color);">
+                  <h3 style="font-size: 1.15rem; font-weight: 800; margin-bottom: 1.25rem;">Blocked Plan Categories</h3>
+                  <div id="blocked-bars-container" style="display: flex; flex-direction: column; gap: 1rem;">
+                    <!-- Category bars populated dynamically -->
+                  </div>
+                </div>
+
+                <!-- Petty excuse callout -->
+                <div style="background: #FFFBEB; border: 2px solid #F59E0B; border-radius: var(--radius-xl); padding: 2rem;">
+                  <div style="font-size: 0.85rem; font-weight: 800; text-transform: uppercase; color: #B45309; margin-bottom: 0.75rem;">
+                    Top Friction Point
+                  </div>
+                  <h3 style="font-size: 1.35rem; font-weight: 900; color: #78350F; margin-bottom: 0.75rem;">
+                    Most Common Petty Excuse
+                  </h3>
+                  <p id="top-petty-excuse" style="font-size: 1.2rem; font-style: italic; color: #92400E; line-height: 1.5; margin-bottom: 1rem;">
+                    "Refuses to wake up before 11am on vacation"
+                  </p>
+                  <p style="font-size: 0.9rem; color: #B45309; line-height: 1.4;">
+                    In real life, people rarely articulate their true constraints upfront until a concrete proposal forces them to speak.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 4: The human side -->
+          <div class="slide-item" id="slide-4">
+            <div>
+              <span class="card-badge" style="background: var(--primary-light); color: var(--primary); margin-bottom: 0.75rem;">
+                Slide 4 of 5 &bull; Group Dynamics
+              </span>
+              <h2 style="font-size: 2rem; font-weight: 900; margin: 0 0 0.5rem 0;">The Human Side</h2>
+              <p style="color: var(--ink-soft); font-size: 0.95rem; margin-bottom: 1.5rem;">
+                How players felt during the deliberation and how roles influenced satisfaction.
+              </p>
+
+              <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; margin-bottom: 2rem;">
+                <div style="background: var(--surface); padding: 1.5rem; border-radius: var(--radius-lg); border: 1.5px solid var(--border-color); text-align: center;">
+                  <div style="font-size: 0.85rem; font-weight: 800; color: var(--ink-soft); text-transform: uppercase;">Felt Heard</div>
+                  <div id="stat-felt-heard" style="font-size: 2.8rem; font-weight: 900; color: var(--primary); margin: 0.5rem 0;">0%</div>
+                  <div style="font-size: 0.85rem; color: var(--ink-soft);">Players who felt their voice mattered</div>
+                </div>
+
+                <div style="background: var(--surface); padding: 1.5rem; border-radius: var(--radius-lg); border: 1.5px solid var(--border-color); text-align: center;">
+                  <div style="font-size: 0.85rem; font-weight: 800; color: var(--ink-soft); text-transform: uppercase;">Twists Shared</div>
+                  <div id="stat-twist-shared" style="font-size: 2.8rem; font-weight: 900; color: #0284c7; margin: 0.5rem 0;">0%</div>
+                  <div style="font-size: 0.85rem; color: var(--ink-soft);">Shared with group within 30s</div>
+                </div>
+
+                <div style="background: var(--surface); padding: 1.5rem; border-radius: var(--radius-lg); border: 1.5px solid var(--border-color); text-align: center;">
+                  <div style="font-size: 0.85rem; font-weight: 800; color: var(--ink-soft); text-transform: uppercase;">Date Checks</div>
+                  <div id="stat-date-checks" style="font-size: 2.8rem; font-weight: 900; color: #8b5cf6; margin: 0.5rem 0;">0</div>
+                  <div style="font-size: 0.85rem; color: var(--ink-soft);">Avg calendar taps per player</div>
+                </div>
+
+                <div style="background: var(--surface); padding: 1.5rem; border-radius: var(--radius-lg); border: 1.5px solid var(--border-color); text-align: center;">
+                  <div style="font-size: 0.85rem; font-weight: 800; color: var(--ink-soft); text-transform: uppercase;">Compromise Gap</div>
+                  <div id="stat-compromise-gap" style="font-size: 2.8rem; font-weight: 900; color: #f59e0b; margin: 0.5rem 0;">1.4★</div>
+                  <div style="font-size: 0.85rem; color: var(--ink-soft);">Difference between highest & lowest role satisfaction</div>
+                </div>
+              </div>
+
+              <!-- Role Satisfaction Bars -->
+              <div style="background: var(--surface); padding: 1.5rem; border-radius: var(--radius-lg); border: 1px solid var(--border-color);">
+                <h3 style="font-size: 1.1rem; font-weight: 800; margin-bottom: 1rem;">Average Satisfaction by Role</h3>
+                <div id="role-satisfaction-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                  <!-- Populated dynamically -->
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 5: Reveal & Highlights -->
+          <div class="slide-item" id="slide-5">
+            <div>
+              <span class="card-badge" style="background: var(--primary-light); color: var(--primary); margin-bottom: 0.75rem;">
+                Slide 5 of 5 &bull; Synthesis & Debrief
+              </span>
+              <h2 style="font-size: 2rem; font-weight: 900; margin: 0 0 0.5rem 0;">Highlights & Class Takeaway</h2>
+
+              <!-- Highlight Cards -->
+              <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin: 1.25rem 0 1.75rem 0;">
+                <div style="background: var(--surface); padding: 1.25rem; border-radius: var(--radius-lg); border: 1.5px solid var(--border-color);">
+                  <div style="font-size: 1.5rem; margin-bottom: 0.25rem;">⚡</div>
+                  <div style="font-weight: 800; font-size: 1.1rem;" id="highlight-fastest-name">Fastest Group</div>
+                  <div style="font-size: 0.9rem; color: var(--ink-soft);" id="highlight-fastest-time">--</div>
+                </div>
+                <div style="background: var(--surface); padding: 1.25rem; border-radius: var(--radius-lg); border: 1.5px solid var(--border-color);">
+                  <div style="font-size: 1.5rem; margin-bottom: 0.25rem;">🛡️</div>
+                  <div style="font-weight: 800; font-size: 1.1rem;" id="highlight-blocked-name">Most Blocked Attempts</div>
+                  <div style="font-size: 0.9rem; color: var(--ink-soft);" id="highlight-blocked-count">--</div>
+                </div>
+                <div style="background: var(--surface); padding: 1.25rem; border-radius: var(--radius-lg); border: 1.5px solid var(--border-color);">
+                  <div style="font-size: 1.5rem; margin-bottom: 0.25rem;">⏳</div>
+                  <div style="font-weight: 800; font-size: 1.1rem;" id="highlight-givingup-name">Closest to Giving Up</div>
+                  <div style="font-size: 0.9rem; color: var(--ink-soft);" id="highlight-givingup-time">--</div>
+                </div>
+              </div>
+
+              <!-- Final Quote & Editable Notes -->
+              <div style="background: #F0FDF4; border: 2px solid var(--primary); border-radius: var(--radius-xl); padding: 2rem;">
+                <h3 style="font-size: 1.8rem; font-weight: 900; color: #166534; margin: 0 0 0.5rem 0;">
+                  "No one failed. The process failed."
+                </h3>
+                <p style="font-size: 1.05rem; color: #15803d; line-height: 1.5; margin-bottom: 1.25rem;">
+                  Planning with 5 friends requires navigating 25 hidden interdependencies. When constraints are uncoordinated, negotiation default is gridlock.
+                </p>
+
+                <!-- Editable text area for teacher's own survey stats / notes -->
+                <div>
+                  <label for="teacher-notes-input" style="font-size: 0.85rem; font-weight: 800; text-transform: uppercase; color: #166534; display: block; margin-bottom: 0.35rem;">
+                    Teacher Survey Stats & Debrief Notes (Editable Live):
+                  </label>
+                  <textarea id="teacher-notes-input" class="form-control" rows="2" placeholder="Add your live observations or class survey questions here..." style="font-family: inherit; font-size: 0.95rem;"></textarea>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Slide Navigation Controls -->
+        <div class="slide-nav-bar">
+          <button id="prev-slide-btn" class="btn btn-secondary" style="padding: 0.5rem 1.25rem;">
+            &larr; Previous Slide
+          </button>
+          <div class="slide-dots" id="slide-dots">
+            <div class="slide-dot active" data-slide="0"></div>
+            <div class="slide-dot" data-slide="1"></div>
+            <div class="slide-dot" data-slide="2"></div>
+            <div class="slide-dot" data-slide="3"></div>
+            <div class="slide-dot" data-slide="4"></div>
+          </div>
+          <button id="next-slide-btn" class="btn btn-primary" style="padding: 0.5rem 1.25rem;">
+            Next Slide &rarr;
+          </button>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- 5. UNOBTRUSIVE HOST CONTROLS TRAY (REVEALS ON HOVER/TAP) -->
+  <div class="host-controls-tray" id="host-controls-tray">
+    <button class="tray-btn" id="tray-pause-btn" title="Pause / Resume Timer">
+      <span id="tray-pause-icon">⏸️</span> <span id="tray-pause-label">Pause</span>
+    </button>
+    <button class="tray-btn" id="tray-add-time-btn" title="Add 30 Seconds">
+      <span>⏱️</span> <span>+30s</span>
+    </button>
+    <button class="tray-btn" id="tray-end-round-btn" title="End Round Early">
+      <span>⏹️</span> <span>End Round</span>
+    </button>
+    <button class="tray-btn" id="tray-reshow-results-btn" title="Re-show Class Results Board">
+      <span>📊</span> <span>Results</span>
+    </button>
+    <button class="tray-btn" id="tray-new-round-btn" title="Start a New Round (Keeps Same Groups)">
+      <span>🔄</span> <span>New Round</span>
+    </button>
+    <button class="tray-btn" id="tray-export-csv-btn" title="Export Full Session CSV">
+      <span>📥</span> <span>Export CSV</span>
+    </button>
+  </div>
+
+  <!-- Sockets & App Logic -->
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/js/illustrations.js"></script>
+  <script>
+    const socket = io();
+
+    // Session State
+    let currentSessionCode = null;
+    let selectedDifficulty = 'medium';
+    let selectedDuration = 180;
+    let selectedReasonSetting = 'mandatory';
+    let isPaused = false;
+    let autoCycleTimer = null;
+    let currentSlideIndex = 0;
+    let latestResults = null;
+
+    // View Switching
+    function showView(viewId) {
+      document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+      const target = document.getElementById(viewId);
+      if (target) target.classList.add('active');
+    }
+
+    // 1. Setup Pills
+    function setupPills(containerId, callback) {
+      const pills = document.querySelectorAll(`#${containerId} .pill-opt`);
+      pills.forEach(pill => {
+        pill.addEventListener('click', () => {
+          pills.forEach(p => p.classList.remove('selected'));
+          pill.classList.add('selected');
+          callback(pill.getAttribute('data-val'));
+        });
+      });
+    }
+
+    setupPills('difficulty-pills', val => selectedDifficulty = val);
+    setupPills('duration-pills', val => selectedDuration = parseInt(val, 10));
+    setupPills('reason-pills', val => selectedReasonSetting = val);
+
+    // Update join URL display
+    const joinUrlEl = document.getElementById('lobby-join-url');
+    if (joinUrlEl) {
+      joinUrlEl.textContent = `${window.location.host}/play.html`;
+    }
+
+    // Auto-reconnect host if session was previously open
+    const savedHostCode = sessionStorage.getItem('host_session_code');
+    if (savedHostCode) {
+      socket.emit('host_join_session', {
+        sessionCode: savedHostCode,
+        origin: window.location.origin
+      });
+    }
+
+    // Open Lobby
+    document.getElementById('open-lobby-btn').addEventListener('click', () => {
+      socket.emit('host_create_session', {
+        difficulty: selectedDifficulty,
+        timerDuration: selectedDuration,
+        dateReasonSetting: selectedReasonSetting,
+        origin: window.location.origin
+      });
+    });
+
+    // Hidden Practice Bots
+    document.getElementById('practice-bots-link').addEventListener('click', () => {
+      socket.emit('host_create_session', {
+        difficulty: selectedDifficulty,
+        timerDuration: selectedDuration,
+        dateReasonSetting: selectedReasonSetting,
+        origin: window.location.origin
+      });
+      // Will add bots after session created
+      sessionStorage.setItem('auto_add_bots', 'true');
+    });
+
+    // Session Created
+    socket.on('session_created', ({ sessionCode, qrDataUrl, state }) => {
+      currentSessionCode = sessionCode;
+      sessionStorage.setItem('host_session_code', sessionCode);
+      document.getElementById('lobby-session-code').textContent = sessionCode;
+      if (qrDataUrl) {
+        document.getElementById('lobby-qr-img').src = qrDataUrl;
+      }
+      showView('lobby-view');
+      renderLobbyState(state);
+
+      if (sessionStorage.getItem('auto_add_bots') === 'true') {
+        sessionStorage.removeItem('auto_add_bots');
+        socket.emit('host_add_bots', { sessionCode, groupCount: 4 });
+      }
+    });
+
+    // Host Joined / Reconnected
+    socket.on('host_joined', ({ sessionCode, qrDataUrl, state, results }) => {
+      currentSessionCode = sessionCode;
+      sessionStorage.setItem('host_session_code', sessionCode);
+      document.getElementById('lobby-session-code').textContent = sessionCode;
+      if (qrDataUrl) document.getElementById('lobby-qr-img').src = qrDataUrl;
+
+      if (state.phase === 'lobby') {
+        showView('lobby-view');
+        renderLobbyState(state);
+      } else if (state.phase === 'round') {
+        showView('round-view');
+      } else if (state.phase === 'results' && results) {
+        showView('results-view');
+        renderResultsBoard(results);
+      }
+    });
+
+    // Lobby State Update
+    socket.on('host_state_updated', (state) => {
+      renderLobbyState(state);
+    });
+
+    function renderLobbyState(state) {
+      if (!state) return;
+      document.getElementById('lobby-player-count').textContent = state.totalPlayers || 0;
+      document.getElementById('lobby-ready-count').textContent = `${state.readyGroups || 0} / ${state.totalGroups || 0}`;
+
+      const grid = document.getElementById('groups-grid');
+      grid.innerHTML = '';
+
+      if (!state.groups || state.groups.length === 0) {
+        grid.innerHTML = `
+          <div style="grid-column: 1 / -1; text-align: center; padding: 4rem 1rem; color: var(--ink-soft);">
+            Waiting for students to join and form groups...
+          </div>
+        `;
+      } else {
+        state.groups.forEach(group => {
+          const card = document.createElement('div');
+          card.className = `group-card ${group.isReady ? 'ready' : ''} ${group.isExcluded ? 'excluded' : ''}`;
+
+          const memberNames = (group.members || []).map(m => `
+            <span style="display: inline-flex; align-items: center; gap: 4px; background: #ffffff; padding: 2px 8px; border-radius: 999px; font-size: 0.8rem; border: 1px solid var(--border-color);">
+              ${m.isReady ? '✓' : '•'} ${m.nickname}
+            </span>
+          `).join(' ');
+
+          card.innerHTML = `
+            <div>
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                <strong style="font-size: 1.1rem; color: var(--ink);">${group.name}</strong>
+                <span style="font-size: 0.85rem; font-weight: 800; color: ${group.isReady ? '#10b981' : 'var(--ink-soft)'};">
+                  ${group.memberCount}/6 ${group.isReady ? '✓ Ready' : ''}
+                </span>
+              </div>
+              <div style="display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 1rem;">
+                ${memberNames || '<span style="font-size: 0.85rem; color: #94a3b8;">Empty group</span>'}
+              </div>
+            </div>
+            <div style="display: flex; justify-content: flex-end;">
+              <button class="btn btn-secondary exclude-btn" data-group-id="${group.groupId}" style="padding: 0.3rem 0.6rem; font-size: 0.75rem; color: #ef4444;">
+                ${group.isExcluded ? 'Include Group' : 'Exclude Group'}
+              </button>
+            </div>
+          `;
+          grid.appendChild(card);
+        });
+
+        // Attach exclude handlers
+        grid.querySelectorAll('.exclude-btn').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            const gId = e.currentTarget.getAttribute('data-group-id');
+            socket.emit('host_exclude_group', { sessionCode: currentSessionCode, groupId: gId });
+          });
+        });
+      }
+
+      // Start round button enabled condition (at least 2 ready groups or practice mode)
+      const startBtn = document.getElementById('start-round-btn');
+      const startHint = document.getElementById('start-round-hint');
+
+      const isStartable = (state.readyGroups >= 2) || (state.readyGroups >= 1 && state.totalPlayers >= 4);
+      startBtn.disabled = !isStartable;
+      if (isStartable) {
+        startHint.innerHTML = `<span style="color: #10b981; font-weight: 800;">✓ Ready to start with ${state.readyGroups} groups!</span>`;
+      } else {
+        startHint.textContent = 'Need at least 2 ready groups to start the round.';
+      }
+    }
+
+    // Start Round Click
+    document.getElementById('start-round-btn').addEventListener('click', () => {
+      socket.emit('host_start_round', { sessionCode: currentSessionCode });
+    });
+
+    // Round Started
+    socket.on('host_round_started', ({ duration, totalGroups }) => {
+      showView('round-view');
+      document.getElementById('quiet-progress-text').textContent = `0 of ${totalGroups} groups have submitted a plan`;
+      document.getElementById('quiet-progress-fill').style.width = '0%';
+
+      // Reset twist chips
+      [1, 2, 3].forEach(idx => {
+        const chip = document.getElementById(`twist-chip-${idx}`);
+        if (chip) chip.classList.remove('active');
+      });
+    });
+
+    // Timer Tick
+    socket.on('timer_tick', ({ remainingSeconds }) => {
+      const min = Math.floor(remainingSeconds / 60);
+      const sec = remainingSeconds % 60;
+      const digits = `${min.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}`;
+
+      const digitsEl = document.getElementById('round-timer-digits');
+      if (digitsEl) digitsEl.textContent = digits;
+
+      // Update circular swoosh arc
+      const arc = document.getElementById('timer-arc');
+      if (arc) {
+        const total = selectedDuration || 180;
+        const fraction = Math.max(0, remainingSeconds / total);
+        const dashOffset = 534 * (1 - fraction);
+        arc.style.strokeDashoffset = dashOffset;
+        if (fraction < 0.2) arc.style.stroke = '#ef4444';
+        else if (fraction < 0.4) arc.style.stroke = '#f59e0b';
+        else arc.style.stroke = '#0FA37F';
+      }
+    });
+
+    // Twist milestone fired -> lights up twist chip
+    socket.on('twist_milestone_fired', ({ twistIndex }) => {
+      const chip = document.getElementById(`twist-chip-${twistIndex}`);
+      if (chip) chip.classList.add('active');
+    });
+
+    // Plan progress update (count only, no names, no hints)
+    socket.on('host_plan_progress', ({ submittedGroups, totalGroups }) => {
+      const text = `${submittedGroups} of ${totalGroups} groups have submitted a plan`;
+      document.getElementById('quiet-progress-text').textContent = text;
+      const pct = totalGroups > 0 ? (submittedGroups / totalGroups) * 100 : 0;
+      document.getElementById('quiet-progress-fill').style.width = `${pct}%`;
+    });
+
+    // Round Ended -> Collecting responses banner
+    socket.on('round_ended_collecting', ({ collected, total, timeoutSeconds }) => {
+      showView('results-view');
+      const banner = document.getElementById('collecting-banner');
+      banner.style.display = 'flex';
+      document.getElementById('collecting-banner-text').textContent = `Collecting responses, ${collected}/${total} in (${timeoutSeconds}s countdown)...`;
+    });
+
+    socket.on('responses_collected_update', ({ collected, total }) => {
+      document.getElementById('collecting-banner-text').textContent = `Collecting responses, ${collected}/${total} in...`;
+    });
+
+    document.getElementById('show-results-now-btn').addEventListener('click', () => {
+      socket.emit('host_show_results_now', { sessionCode: currentSessionCode });
+    });
+
+    // Class Results Ready
+    socket.on('class_results_ready', (results) => {
+      document.getElementById('collecting-banner').style.display = 'none';
+      renderResultsBoard(results);
+      startSlideshowAutoCycle();
+    });
+
+    socket.on('class_results_update', (results) => {
+      renderResultsBoard(results);
+    });
+
+    // Render 5-slide Results Board
+    function renderResultsBoard(res) {
+      latestResults = res;
+      if (!res) return;
+
+      // Slide 1
+      document.getElementById('res-success-rate').textContent = `${res.successRate || 0}%`;
+      document.getElementById('res-headline-subline').textContent = `${res.lockedCount || 0} of ${res.totalGroups || 0} groups planned a trip.`;
+      document.getElementById('res-total-groups').textContent = res.totalGroups || 0;
+      document.getElementById('res-total-players').textContent = res.totalPlayers || 0;
+      document.getElementById('res-locked-count').textContent = res.lockedCount || 0;
+
+      // Slide 2 Leaderboard
+      const tbody = document.getElementById('leaderboard-tbody');
+      tbody.innerHTML = '';
+      (res.leaderboard || []).forEach((g, idx) => {
+        const tr = document.createElement('tr');
+        tr.className = 'leaderboard-row';
+
+        let verdictClass = 'verdict-failed';
+        if (g.verdict.includes('happy')) verdictClass = 'verdict-happy';
+        else if (g.verdict.includes('Compromise')) verdictClass = 'verdict-compromise';
+
+        const goldenPreview = (g.goldenWindows || []).map(w => `${w.startDate} - ${w.endDate}`).join(' &bull; ');
+
+        tr.innerHTML = `
+          <td class="leaderboard-cell">
+            <strong>${g.name}</strong>
+            <div class="golden-revealed" style="display: none; font-size: 0.8rem; color: #0284c7; margin-top: 4px;">
+              Golden dates: ${goldenPreview || 'None'}
+            </div>
+          </td>
+          <td class="leaderboard-cell">
+            <span style="font-weight: 800; color: ${g.outcome === 'Trip locked' ? '#10b981' : '#ef4444'};">
+              ${g.outcome === 'Trip locked' ? '✓ Locked' : '✗ ' + g.outcome}
+            </span>
+          </td>
+          <td class="leaderboard-cell">${g.timeTaken}</td>
+          <td class="leaderboard-cell">${g.blockedAttempts}</td>
+          <td class="leaderboard-cell">★ ${g.avgSatisfaction}</td>
+          <td class="leaderboard-cell">
+            <span class="verdict-chip ${verdictClass}">${g.verdict}</span>
+          </td>
+        `;
+
+        // Tapping row reveals golden dates
+        tr.addEventListener('click', () => {
+          const el = tr.querySelector('.golden-revealed');
+          if (el) el.style.display = el.style.display === 'none' ? 'block' : 'none';
+        });
+
+        tbody.appendChild(tr);
+      });
+
+      // Slide 3 Stuck categories
+      const barsContainer = document.getElementById('blocked-bars-container');
+      barsContainer.innerHTML = '';
+      const cats = res.blockedCategories || {};
+      const maxVal = Math.max(1, ...Object.values(cats));
+
+      Object.entries(cats).forEach(([catName, count]) => {
+        const pct = Math.round((count / maxVal) * 100);
+        const row = document.createElement('div');
+        row.innerHTML = `
+          <div style="display: flex; justify-content: space-between; font-size: 0.9rem; font-weight: 700; margin-bottom: 4px;">
+            <span>${catName}</span>
+            <span>${count} times</span>
+          </div>
+          <div style="width: 100%; height: 10px; background: #e2e8f0; border-radius: 999px; overflow: hidden;">
+            <div style="height: 100%; width: ${pct}%; background: #ef4444; border-radius: 999px;"></div>
+          </div>
+        `;
+        barsContainer.appendChild(row);
+      });
+
+      if (res.topPettyExcuse) {
+        document.getElementById('top-petty-excuse').textContent = `"${res.topPettyExcuse}"`;
+      }
+
+      // Slide 4 Human side
+      const hs = res.humanSide || {};
+      document.getElementById('stat-felt-heard').textContent = `${hs.feltHeardPercent || 0}%`;
+      document.getElementById('stat-twist-shared').textContent = `${hs.twistSharedPercent || 0}%`;
+      document.getElementById('stat-date-checks').textContent = hs.avgDateChecks || '0';
+
+      const roleContainer = document.getElementById('role-satisfaction-container');
+      roleContainer.innerHTML = '';
+      (hs.roleSatisfaction || []).forEach(r => {
+        const item = document.createElement('div');
+        item.style.cssText = 'background: #f8fafc; padding: 0.75rem 1rem; border-radius: 8px; border: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;';
+        item.innerHTML = `
+          <span style="font-weight: 700; font-size: 0.9rem;">${r.role}</span>
+          <span style="font-weight: 900; color: #10b981;">★ ${r.avg}</span>
+        `;
+        roleContainer.appendChild(item);
+      });
+
+      // Slide 5 Highlights
+      const hl = res.highlights || {};
+      document.getElementById('highlight-fastest-name').textContent = hl.fastestGroup?.name || 'None';
+      document.getElementById('highlight-fastest-time').textContent = hl.fastestGroup?.time || '--';
+
+      document.getElementById('highlight-blocked-name').textContent = hl.mostBlockedGroup?.name || 'None';
+      document.getElementById('highlight-blocked-count').textContent = `${hl.mostBlockedGroup?.count || 0} blocked plans`;
+
+      document.getElementById('highlight-givingup-name').textContent = hl.closestGivingUp?.name || 'None';
+      document.getElementById('highlight-givingup-time').textContent = hl.closestGivingUp?.time || '--';
+
+      const notesInput = document.getElementById('teacher-notes-input');
+      if (notesInput && res.teacherNotes) {
+        notesInput.value = res.teacherNotes;
+      }
+    }
+
+    // Teacher debrief notes live saving
+    document.getElementById('teacher-notes-input').addEventListener('input', (e) => {
+      socket.emit('host_update_notes', {
+        sessionCode: currentSessionCode,
+        notes: e.target.value
+      });
+    });
+
+    // Slide Controls
+    function setSlide(index) {
+      currentSlideIndex = (index + 5) % 5;
+      document.querySelectorAll('.slide-item').forEach((el, i) => {
+        el.classList.toggle('active', i === currentSlideIndex);
+      });
+      document.querySelectorAll('.slide-dot').forEach((el, i) => {
+        el.classList.toggle('active', i === currentSlideIndex);
+      });
+    }
+
+    document.getElementById('prev-slide-btn').addEventListener('click', () => {
+      stopSlideshowAutoCycle();
+      setSlide(currentSlideIndex - 1);
+    });
+
+    document.getElementById('next-slide-btn').addEventListener('click', () => {
+      stopSlideshowAutoCycle();
+      setSlide(currentSlideIndex + 1);
+    });
+
+    document.querySelectorAll('.slide-dot').forEach(dot => {
+      dot.addEventListener('click', (e) => {
+        stopSlideshowAutoCycle();
+        const idx = parseInt(e.target.getAttribute('data-slide'), 10);
+        setSlide(idx);
+      });
+    });
+
+    function startSlideshowAutoCycle() {
+      if (autoCycleTimer) clearInterval(autoCycleTimer);
+      autoCycleTimer = setInterval(() => {
+        setSlide(currentSlideIndex + 1);
+      }, 7000);
+      document.getElementById('auto-cycle-btn').textContent = '⏸️ Pause Slideshow';
+    }
+
+    function stopSlideshowAutoCycle() {
+      if (autoCycleTimer) {
+        clearInterval(autoCycleTimer);
+        autoCycleTimer = null;
+        document.getElementById('auto-cycle-btn').textContent = '▶️ Play Slideshow';
+      }
+    }
+
+    document.getElementById('auto-cycle-btn').addEventListener('click', () => {
+      if (autoCycleTimer) stopSlideshowAutoCycle();
+      else startSlideshowAutoCycle();
+    });
+
+    // Host Tray Controls
+    document.getElementById('tray-pause-btn').addEventListener('click', () => {
+      socket.emit('host_pause_round', { sessionCode: currentSessionCode });
+    });
+
+    socket.on('round_paused_state', ({ isPaused: p }) => {
+      isPaused = p;
+      document.getElementById('tray-pause-icon').textContent = isPaused ? '▶️' : '⏸️';
+      document.getElementById('tray-pause-label').textContent = isPaused ? 'Resume' : 'Pause';
+    });
+
+    document.getElementById('tray-add-time-btn').addEventListener('click', () => {
+      socket.emit('host_add_time', { sessionCode: currentSessionCode, seconds: 30 });
+    });
+
+    document.getElementById('tray-end-round-btn').addEventListener('click', () => {
+      if (confirm('End round early for all groups?')) {
+        socket.emit('host_end_round_early', { sessionCode: currentSessionCode });
+      }
+    });
+
+    document.getElementById('tray-reshow-results-btn').addEventListener('click', () => {
+      showView('results-view');
+      if (latestResults) renderResultsBoard(latestResults);
+    });
+
+    document.getElementById('tray-new-round-btn').addEventListener('click', () => {
+      if (confirm('Start a new round with the same student groups?')) {
+        socket.emit('host_start_new_round', { sessionCode: currentSessionCode });
+      }
+    });
+
+    socket.on('round_reset_to_lobby', () => {
+      showView('lobby-view');
+    });
+
+    document.getElementById('tray-export-csv-btn').addEventListener('click', () => {
+      if (currentSessionCode) {
+        window.location.href = `/api/session/${encodeURIComponent(currentSessionCode)}/export.csv`;
+      }
+    });
+  </script>
+</body>
+</html>

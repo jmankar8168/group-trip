@@ -16,7 +16,3 @@ services:
         value: data/trip_game.db
       - key: ALLOWED_ORIGINS
         value: "*"
-    disk:
-      name: game-data
-      mountPath: /data
-      sizeGB: 1

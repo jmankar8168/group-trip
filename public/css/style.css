@@ -2736,4 +2736,423 @@ body, button, input, select, textarea, .font-body {
   margin: 0.25rem 0;
 }
 
+/* ==============================================================
+   SIMULATION MODE · HOST PROJECTOR & REAL-TIME PLAYER INSPECTOR
+   ============================================================== */
+
+/* Simulation Badge */
+.sim-mode-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--y, #f6e84f);
+  color: var(--ink, #101114);
+  border: 1.5px solid var(--ink, #101114);
+  font-family: var(--font-sans);
+  font-weight: 800;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 0.35rem 0.85rem;
+  border-radius: 99px;
+  box-shadow: 2px 2px 0px var(--ink);
+}
+.sim-mode-badge::before {
+  content: '';
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--red, #f0483e);
+  animation: pulse 1.2s infinite;
+}
+
+/* Simulation Controls Top Bar */
+.sim-top-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #ffffff;
+  border: 1.5px solid var(--border-color);
+  border-radius: var(--radius-full, 99px);
+  padding: 0.5rem 1.25rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  box-shadow: 3px 3px 0px var(--ink);
+}
+.sim-btn-group {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+/* Simulation Tables Grid */
+.sim-tables-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+  width: 100%;
+}
+
+.sim-table-card {
+  background: #ffffff;
+  border: 2px solid var(--ink);
+  border-radius: var(--r-card, 28px);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: all 0.25s var(--ease-spring);
+  box-shadow: 4px 4px 0px var(--ink);
+  position: relative;
+}
+.sim-table-card:hover {
+  transform: translateY(-2px);
+}
+.sim-table-card.locked {
+  border-color: var(--g);
+  background: rgba(31, 91, 60, 0.04);
+  box-shadow: 4px 4px 0px var(--g);
+}
+.sim-table-card.blocked {
+  border-color: var(--o);
+  box-shadow: 4px 4px 0px var(--o);
+}
+
+.sim-table-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+.sim-table-title {
+  font-family: var(--font-serif);
+  font-size: 1.6rem;
+  margin: 0;
+  color: var(--ink);
+}
+
+/* Status Chips */
+.sim-status-chip {
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.25rem 0.75rem;
+  border-radius: 99px;
+  border: 1.5px solid var(--ink);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+.sim-status-chip.planning { background: var(--paper); color: var(--ink); }
+.sim-status-chip.pending { background: var(--lavender); color: var(--ink); animation: pulse 1.5s infinite; }
+.sim-status-chip.locked { background: var(--g); color: #ffffff; border-color: var(--g); }
+.sim-status-chip.blocked { background: var(--o); color: #ffffff; border-color: var(--o); }
+.sim-status-chip.failed { background: var(--ink); color: #ffffff; }
+
+/* Bot Members Roster within Table Card */
+.sim-bots-roster {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 1rem;
+}
+.sim-bot-pill {
+  background: var(--paper);
+  border: 1px solid var(--border-color);
+  border-radius: 99px;
+  padding: 0.25rem 0.65rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--ink);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  cursor: pointer;
+  transition: all 0.2s var(--ease-spring);
+}
+.sim-bot-pill:hover {
+  background: var(--y);
+  border-color: var(--ink);
+  transform: translateY(-1px);
+}
+.sim-bot-pill.typing {
+  background: var(--sun);
+  border-color: var(--ink);
+  animation: pulse 1.2s infinite;
+}
+.sim-bot-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--mute);
+}
+.sim-bot-pill.typing .sim-bot-dot {
+  background: var(--o);
+}
+
+/* Table Chat Preview */
+.sim-table-chat-preview {
+  background: var(--paper);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 0.75rem 1rem;
+  min-height: 84px;
+  max-height: 84px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 0.35rem;
+  margin-bottom: 1rem;
+  font-size: 0.82rem;
+}
+.sim-chat-preview-line {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Table Footer Actions */
+.sim-table-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 0.75rem;
+  border-top: 1px dashed var(--border-color);
+}
+
+/* -------------------------------------------------------------
+   PLAYER INSPECTOR SIDE DRAWER (SINGLE & DUAL PINNED MODES)
+   ------------------------------------------------------------- */
+.sim-inspector-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(16, 17, 20, 0.45);
+  backdrop-filter: blur(4px);
+  z-index: 1100;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+.sim-inspector-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.sim-inspector-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 480px;
+  max-width: 95vw;
+  height: 100vh;
+  background: #ffffff;
+  border-left: 2.5px solid var(--ink);
+  z-index: 1200;
+  box-shadow: -10px 0 30px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  transform: translateX(100%);
+  transition: transform 0.3s var(--ease-spring);
+  overflow-y: auto;
+}
+.sim-inspector-drawer.active {
+  transform: translateX(0);
+}
+
+/* Side-by-Side Pinned Dual Inspector Mode */
+.sim-dual-inspector-container {
+  display: flex;
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100vh;
+  z-index: 1200;
+  pointer-events: none;
+}
+.sim-dual-inspector-container.active {
+  pointer-events: auto;
+}
+.sim-dual-inspector-container .sim-inspector-drawer {
+  position: relative;
+  width: 460px;
+  max-width: 48vw;
+  height: 100vh;
+  border-left: 2px solid var(--ink);
+}
+
+/* Inspector Header */
+.sim-drawer-header {
+  padding: 1.5rem 1.75rem;
+  border-bottom: 1.5px solid var(--border-color);
+  background: var(--paper);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.sim-drawer-body {
+  padding: 1.75rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Blinking Typing Cursor */
+.sim-typing-cursor {
+  display: inline-block;
+  width: 2px;
+  height: 1.1em;
+  background: var(--o);
+  vertical-align: text-bottom;
+  animation: cursorBlink 0.8s infinite;
+}
+@keyframes cursorBlink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* Live Activity Card */
+.sim-live-activity-box {
+  background: var(--paper);
+  border: 1.5px solid var(--ink);
+  border-radius: 16px;
+  padding: 1rem 1.25rem;
+  font-size: 0.95rem;
+}
+
+/* Secret Constraints Badges */
+.sim-constraint-item {
+  background: #ffffff;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 0.75rem 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+.sim-badge-hidden {
+  background: var(--y);
+  color: var(--ink);
+  border: 1px solid var(--ink);
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  padding: 0.15rem 0.5rem;
+  border-radius: 99px;
+}
+.sim-badge-revealed {
+  background: var(--g);
+  color: #ffffff;
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  padding: 0.15rem 0.5rem;
+  border-radius: 99px;
+}
+
+/* Mini Calendar in Inspector */
+.sim-inspector-calendar {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  margin-top: 0.5rem;
+}
+.sim-cal-day-cell {
+  background: var(--paper);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  aspect-ratio: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  position: relative;
+  cursor: pointer;
+}
+.sim-cal-day-cell.fits {
+  background: rgba(31, 91, 60, 0.15);
+  border-color: var(--g);
+  color: var(--g);
+}
+.sim-cal-day-cell.conflicts {
+  background: rgba(255, 90, 54, 0.15);
+  border-color: var(--o);
+  color: var(--o);
+}
+.sim-cal-day-cell.golden {
+  border: 2px solid var(--sun);
+  box-shadow: 0 0 6px var(--sun);
+}
+
+/* Thoughts Stream Log */
+.sim-thoughts-log {
+  background: var(--ink);
+  color: #38ef7d;
+  font-family: monospace;
+  font-size: 0.8rem;
+  border-radius: 14px;
+  padding: 1rem;
+  max-height: 160px;
+  overflow-y: auto;
+  line-height: 1.45;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.sim-thought-entry {
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.15);
+  padding-bottom: 0.35rem;
+}
+
+/* 120s Timeline Strip */
+.sim-timeline-strip {
+  width: 100%;
+  height: 24px;
+  background: var(--paper);
+  border: 1px solid var(--border-color);
+  border-radius: 99px;
+  position: relative;
+  overflow: hidden;
+  margin-top: 0.5rem;
+}
+.sim-timeline-strip-tick {
+  position: absolute;
+  top: 4px;
+  width: 4px;
+  height: 16px;
+  border-radius: 2px;
+}
+
+/* Replay Scrubber Bar */
+.sim-replay-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-top: 2px solid var(--ink);
+  padding: 0.75rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 1050;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+}
+
+
 

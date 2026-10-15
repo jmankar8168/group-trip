@@ -30,6 +30,14 @@ const {
   checkPlayerDateAvailability
 } = require('./lib/solver.js');
 
+const {
+  SimulationEngine,
+  BOT_COMMUNICATION_STYLES,
+  SCENARIO_PRESETS
+} = require('./lib/simulation-engine.js');
+
+const activeSimulations = new Map(); // simId -> SimulationEngine
+
 const app = express();
 // Enable reverse proxy trust (critical for Render, Railway, Fly.io, Heroku)
 app.set('trust proxy', 1);
@@ -117,6 +125,24 @@ app.get('/api/activities', (req, res) => res.json(readJSON(ACTIVITIES_FILE)));
 app.get('/api/twists', (req, res) => res.json(readJSON(TWISTS_FILE)));
 app.get('/api/calendar', (req, res) => {
   res.json({ days: CALENDAR_DAYS, totalWindows: ALL_WINDOWS.length });
+});
+
+// Simulation Mode Endpoints
+app.get('/api/simulation/presets', (req, res) => {
+  res.json({
+    presets: SCENARIO_PRESETS,
+    styles: BOT_COMMUNICATION_STYLES
+  });
+});
+
+app.get('/api/simulation/:id/events.json', (req, res) => {
+  const sim = activeSimulations.get(req.params.id);
+  if (!sim) {
+    return res.status(404).json({ error: 'Simulation not found' });
+  }
+  res.header('Content-Type', 'application/json');
+  res.attachment(`simulation_${req.params.id}_events.json`);
+  res.send(JSON.stringify(sim.events, null, 2));
 });
 
 // Auto-generated fun group names
@@ -456,6 +482,94 @@ async function persistSessionLog(session) {
 
 // WebSockets Game Manager for Classroom Session
 io.on('connection', (socket) => {
+
+  // ===================== SIMULATION MODE (REAL-TIME BOT ROUND) =====================
+  socket.on('sim_start', ({ tableCount = 3, playersPerTable = 5, scenario = 'REALISTIC', seed = 42, speed = 1.0 }) => {
+    // If a previous simulation was active on this socket, halt it
+    if (socket.currentSimId && activeSimulations.has(socket.currentSimId)) {
+      const prev = activeSimulations.get(socket.currentSimId);
+      prev.pause();
+      activeSimulations.delete(socket.currentSimId);
+    }
+
+    const cards = readJSON(CARDS_FILE);
+    const twists = readJSON(TWISTS_FILE);
+    const dests = readJSON(DESTINATIONS_FILE);
+    const acts = readJSON(ACTIVITIES_FILE);
+
+    const sim = new SimulationEngine({
+      seed,
+      scenario,
+      tableCount,
+      playersPerTable,
+      speed
+    });
+
+    sim.init(cards, twists, dests, acts);
+    activeSimulations.set(sim.id, sim);
+    socket.currentSimId = sim.id;
+
+    // Send full initial state to host
+    socket.emit('sim_initialized', {
+      simId: sim.id,
+      seed: sim.seed,
+      scenario: sim.scenario,
+      tableCount: sim.tableCount,
+      playersPerTable: sim.playersPerTable,
+      speed: sim.speedMultiplier,
+      durationSeconds: sim.durationSeconds,
+      tables: sim.tables.map(t => ({
+        id: t.id,
+        name: t.name,
+        goldenWindows: t.goldenWindows,
+        status: t.status,
+        bots: t.bots.map(b => ({
+          id: b.id,
+          nickname: b.nickname,
+          style: b.style,
+          roleCard: b.roleCard,
+          dateRule: b.dateRule,
+          currentSelections: b.currentSelections
+        }))
+      }))
+    });
+
+    // Event streaming: single source of truth
+    sim.onEventCallbacks.push((event) => {
+      socket.emit('sim_event', event);
+    });
+
+    // Real-time ticking
+    sim.onTickCallbacks.push((tickData) => {
+      socket.emit('sim_tick', tickData);
+    });
+
+    // Round completion
+    sim.onEndCallbacks.push((debriefData) => {
+      socket.emit('sim_ended', debriefData);
+    });
+
+    sim.start();
+  });
+
+  socket.on('sim_control', ({ action, speed }) => {
+    const sim = activeSimulations.get(socket.currentSimId);
+    if (!sim) return;
+
+    if (action === 'pause') {
+      sim.pause();
+      socket.emit('sim_status_change', { status: 'paused', isPaused: true });
+    } else if (action === 'resume') {
+      sim.resume();
+      socket.emit('sim_status_change', { status: 'running', isPaused: false });
+    } else if (action === 'set_speed') {
+      sim.setSpeed(speed);
+      socket.emit('sim_speed_change', { speed: sim.speedMultiplier });
+    } else if (action === 'restart') {
+      sim.pause();
+      socket.emit('sim_restart_ready');
+    }
+  });
 
   // ===================== HOST ACTIONS =====================
 

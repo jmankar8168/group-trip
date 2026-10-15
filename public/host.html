@@ -549,9 +549,108 @@
 </head>
 <body>
 
+  <!-- Top Global Mode Switcher -->
+  <div style="display: flex; justify-content: space-between; align-items: center; max-width: 1400px; margin: 1rem auto 0 auto; padding: 0 2rem; width: 100%;">
+    <div style="display: flex; align-items: center; gap: 0.75rem;">
+      <a href="/" class="logo-badge" style="font-family: var(--font-serif); font-size: 1.25rem; text-decoration: none;">
+        <span>The Trip That Never Happened</span>
+      </a>
+      <span class="sim-mode-badge" id="sim-active-indicator" style="display: none;">
+        SIMULATION MODE &bull; BOTS ONLY
+      </span>
+    </div>
+    <div style="display: flex; gap: 0.6rem; align-items: center;">
+      <button id="switch-to-class-btn" class="pill-opt selected" style="font-size: 0.85rem; padding: 0.4rem 1rem;">
+        👨‍🏫 Live Classroom
+      </button>
+      <button id="switch-to-sim-btn" class="pill-opt" style="font-size: 0.85rem; padding: 0.4rem 1rem;">
+        🤖 Simulation Mode (Bots)
+      </button>
+      <button class="theme-toggle-btn" id="theme-toggle" title="Toggle Dark/Light Mode">🌙</button>
+    </div>
+  </div>
+
   <div class="projector-container">
 
-    <!-- 1. SETUP VIEW -->
+    <!-- 1B. SIMULATION SETUP VIEW -->
+    <section id="sim-setup-view" class="view-section">
+      <div class="setup-card" style="border: 2px solid var(--ink); box-shadow: 6px 6px 0px var(--ink);">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
+          <span class="kicker" style="color: var(--o);">Autonomous Bot Laboratory &bull; Multi-Table Real-Time</span>
+          <span class="sim-mode-badge">SIMULATION</span>
+        </div>
+        <h1 style="font-size: clamp(34px, 4vw, 54px); margin-bottom: 0.5rem;">Run Simulation Mode</h1>
+        <p style="color: var(--mute); font-size: 1.05rem; margin-bottom: 1.75rem; line-height: 1.5;">
+          Watch bots with secret personas, conflicting leave policies, and private communication styles deliberate live across multiple tables. Inspect any player's private state, typing stream, and thoughts in real time.
+        </p>
+
+        <!-- Number of Tables (1-6) -->
+        <div style="margin-bottom: 1.5rem;">
+          <label class="kicker" style="margin-bottom: 0.4rem;">Number of Tables (1–6)</label>
+          <div class="pill-group" id="sim-tables-pills">
+            <button type="button" class="pill-opt" data-val="1">1 Table</button>
+            <button type="button" class="pill-opt" data-val="2">2 Tables</button>
+            <button type="button" class="pill-opt selected" data-val="3">3 Tables</button>
+            <button type="button" class="pill-opt" data-val="4">4 Tables</button>
+            <button type="button" class="pill-opt" data-val="5">5 Tables</button>
+            <button type="button" class="pill-opt" data-val="6">6 Tables</button>
+          </div>
+        </div>
+
+        <!-- Players Per Table (4-6) -->
+        <div style="margin-bottom: 1.5rem;">
+          <label class="kicker" style="margin-bottom: 0.4rem;">Bots Per Table (4–6)</label>
+          <div class="pill-group" id="sim-bots-pills">
+            <button type="button" class="pill-opt" data-val="4">4 Bots</button>
+            <button type="button" class="pill-opt selected" data-val="5">5 Bots</button>
+            <button type="button" class="pill-opt" data-val="6">6 Bots</button>
+          </div>
+        </div>
+
+        <!-- Scenario Presets -->
+        <div style="margin-bottom: 1.5rem;">
+          <label class="kicker" style="margin-bottom: 0.4rem;">Scenario Preset</label>
+          <div class="pill-group" id="sim-preset-pills">
+            <button type="button" class="pill-opt" data-val="CHAOTIC">Chaotic (High Friction)</button>
+            <button type="button" class="pill-opt selected" data-val="REALISTIC">Realistic (10–25% Success)</button>
+            <button type="button" class="pill-opt" data-val="SMOOTH">Smooth (High Alignment)</button>
+            <button type="button" class="pill-opt" data-val="CUSTOM">Custom</button>
+          </div>
+          <div id="sim-preset-desc" style="font-size: 0.88rem; color: var(--mute); margin-top: 0.5rem; font-style: italic;">
+            Balanced mix of styles, natural friction, 10–25% success rate as seen in live classrooms.
+          </div>
+        </div>
+
+        <!-- Seed Field with Randomise Button -->
+        <div style="margin-bottom: 1.5rem;">
+          <label class="kicker" style="margin-bottom: 0.4rem;">Deterministic Run Seed</label>
+          <div style="display: flex; gap: 0.5rem; max-width: 320px;">
+            <input type="number" id="sim-seed-input" class="form-control" value="42" style="border-radius: 99px; padding: 0.6rem 1rem; border: 1.5px solid var(--border-color); font-weight: 700;">
+            <button type="button" id="sim-random-seed-btn" class="btn btn-secondary" style="border-radius: 99px; padding: 0.6rem 1rem; white-space: nowrap;">
+              🎲 Randomise
+            </button>
+          </div>
+        </div>
+
+        <!-- Speed Selector -->
+        <div style="margin-bottom: 2rem;">
+          <label class="kicker" style="margin-bottom: 0.4rem;">Playback Speed</label>
+          <div class="pill-group" id="sim-speed-pills">
+            <button type="button" class="pill-opt sim-speed-pill" data-speed="0.5">0.5x</button>
+            <button type="button" class="pill-opt sim-speed-pill selected" data-speed="1.0">1x (Normal)</button>
+            <button type="button" class="pill-opt sim-speed-pill" data-speed="2.0">2x</button>
+            <button type="button" class="pill-opt sim-speed-pill" data-speed="4.0">4x</button>
+          </div>
+        </div>
+
+        <!-- Launch Button -->
+        <button id="sim-run-btn" class="btn btn-primary" style="width: 100%; justify-content: center; padding: 1.1rem; font-size: 1.15rem; font-weight: 800; border-radius: var(--radius-full); box-shadow: 4px 4px 0px var(--ink);">
+          Run simulation &rarr;
+        </button>
+      </div>
+    </section>
+
+    <!-- 1. SETUP VIEW (CLASSROOM) -->
     <section id="setup-view" class="view-section active">
       <div class="setup-card">
         <span class="kicker">Primary Research &bull; Live Deliberation</span>
@@ -769,6 +868,66 @@
           </div>
           <span id="quiet-progress-text">0 of 0 groups have submitted a plan</span>
         </div>
+      </div>
+    </section>
+
+    <!-- 3B. SIMULATION LIVE VIEW (PROJECTOR) -->
+    <section id="sim-live-view" class="view-section">
+      <!-- Top Bar Controls -->
+      <div class="sim-top-controls">
+        <div style="display: flex; align-items: center; gap: 0.75rem;">
+          <span class="sim-mode-badge">SIMULATION MODE</span>
+          <span class="pill pill-lavender" id="sim-meta-scenario" style="font-size: 0.75rem; font-weight: 700;">Realistic</span>
+          <span class="pill pill-yellow" id="sim-meta-seed" style="font-size: 0.75rem; font-weight: 700;">Seed #42</span>
+          <span style="font-size: 0.8rem; color: var(--mute);" id="sim-meta-tables">3 Tables</span>
+        </div>
+
+        <div class="sim-btn-group">
+          <button id="sim-top-pause-btn" class="btn btn-secondary" style="border-radius: 99px; padding: 0.4rem 0.9rem; font-size: 0.85rem;" onclick="window.simController.togglePause()">
+            ⏸ Pause
+          </button>
+          <button class="btn btn-secondary" style="border-radius: 99px; padding: 0.4rem 0.9rem; font-size: 0.85rem;" onclick="window.simController.restartSimulation()">
+            ↺ Restart
+          </button>
+          <div style="display: flex; gap: 0.2rem; align-items: center; margin-left: 0.5rem;">
+            <span style="font-size: 0.75rem; font-weight: 800; color: var(--mute);">Speed:</span>
+            <button class="pill-opt sim-speed-pill" data-speed="0.5" style="padding: 0.25rem 0.6rem; font-size: 0.75rem;" onclick="window.simController.setSpeed(0.5)">0.5x</button>
+            <button class="pill-opt sim-speed-pill selected" data-speed="1.0" style="padding: 0.25rem 0.6rem; font-size: 0.75rem;" onclick="window.simController.setSpeed(1.0)">1x</button>
+            <button class="pill-opt sim-speed-pill" data-speed="2.0" style="padding: 0.25rem 0.6rem; font-size: 0.75rem;" onclick="window.simController.setSpeed(2.0)">2x</button>
+            <button class="pill-opt sim-speed-pill" data-speed="4.0" style="padding: 0.25rem 0.6rem; font-size: 0.75rem;" onclick="window.simController.setSpeed(4.0)">4x</button>
+          </div>
+          <button class="btn btn-secondary" style="border-radius: 99px; padding: 0.4rem 0.8rem; font-size: 0.85rem; margin-left: 0.5rem;" onclick="window.simController.socket.emit('sim_control', { action: 'pause' }); window.simController.showSimView('sim-setup-view');">
+            ← Exit Sim
+          </button>
+        </div>
+      </div>
+
+      <!-- Twist Alert Banner -->
+      <div id="sim-twist-announcement-banner" style="display: none; background: var(--sun); border: 2px solid var(--ink); border-radius: 16px; padding: 0.85rem 1.25rem; margin-bottom: 1.5rem; justify-content: space-between; align-items: center; box-shadow: 4px 4px 0px var(--ink);">
+        <div>
+          <span style="font-size: 0.75rem; font-weight: 800; text-transform: uppercase; color: var(--o);">⚡ PLOT TWIST DROPPED</span>
+          <div id="sim-twist-text" style="font-weight: 800; font-size: 1.05rem; color: var(--ink);"></div>
+        </div>
+        <div id="sim-twist-target" style="font-size: 0.85rem; font-weight: 700; color: var(--mute);"></div>
+      </div>
+
+      <!-- Main Center: Timer -->
+      <div class="round-content-centered" style="padding: 0.5rem 0 1rem 0;">
+        <div class="circle-timer-wrap" style="width: 170px; height: 170px; margin-bottom: 1.25rem;">
+          <svg class="circle-timer-svg" viewBox="0 0 190 190" style="width: 170px; height: 170px;">
+            <circle class="circle-timer-bg" cx="95" cy="95" r="85"></circle>
+            <circle id="sim-timer-arc" class="circle-timer-progress" cx="95" cy="95" r="85"></circle>
+          </svg>
+          <div class="circle-timer-digits" id="sim-timer-digits" style="font-size: 3.4rem;">02:00</div>
+        </div>
+        <p style="color: var(--mute); font-size: 0.95rem; margin: 0 0 1rem 0;">
+          Bots are testing dates, negotiating trade-offs, and voting. Click any bot name below to inspect their live typing &amp; private thoughts.
+        </p>
+      </div>
+
+      <!-- Tables Grid Container -->
+      <div class="sim-tables-grid" id="sim-tables-container">
+        <!-- Rendered by HostSimulationController -->
       </div>
     </section>
 
@@ -1043,11 +1202,37 @@
     <button class="tray-btn" id="tray-export-csv-btn" title="Export Full Session CSV">
       <span>📥</span> <span>Export CSV</span>
     </button>
+  <!-- Player Inspector Overlay -->
+  <div class="sim-inspector-overlay" id="sim-inspector-overlay" onclick="window.simController.closePlayerInspector(0)"></div>
+
+  <!-- Dual Pinned Inspector Container -->
+  <div class="sim-dual-inspector-container" id="sim-dual-inspector-container">
+    <div class="sim-inspector-drawer" id="sim-inspector-drawer-1"></div>
+    <div class="sim-inspector-drawer" id="sim-inspector-drawer-2"></div>
+  </div>
+
+  <!-- Replay Scrubber Bar (Visible after simulation) -->
+  <div class="sim-replay-bar" id="sim-replay-bar" style="display: none;">
+    <div style="display: flex; align-items: center; gap: 1rem;">
+      <span class="sim-mode-badge">REPLAY MODE</span>
+      <span style="font-size: 0.85rem; font-weight: 700;">Scrub Timeline:</span>
+      <input type="range" id="sim-replay-scrubber" min="0" max="120" value="120" style="width: 260px; accent-color: var(--o);" oninput="document.getElementById('sim-scrubber-time').textContent = window.simController.formatSimTime(this.value); window.simController.scrubReplay(parseInt(this.value, 10))">
+      <span id="sim-scrubber-time" style="font-family: var(--font-serif); font-size: 1.2rem; font-weight: 700;">02:00</span>
+    </div>
+    <div style="display: flex; gap: 0.75rem; align-items: center;">
+      <button class="btn btn-secondary" style="border-radius: 99px; padding: 0.4rem 0.9rem;" onclick="window.simController.exportEventsJSON()">
+        📥 Export Events (JSON)
+      </button>
+      <button class="btn btn-primary" style="border-radius: 99px; padding: 0.4rem 0.9rem;" onclick="window.simController.showSimView('sim-setup-view'); document.getElementById('sim-replay-bar').style.display='none';">
+        New Simulation &rarr;
+      </button>
+    </div>
   </div>
 
   <!-- Sockets & App Logic -->
   <script src="/socket.io/socket.io.js"></script>
   <script src="/js/illustrations.js"></script>
+  <script src="/js/host-simulation.js"></script>
   <script>
     const socket = io();
 
@@ -1530,6 +1715,81 @@
       if (currentSessionCode) {
         window.location.href = `/api/session/${encodeURIComponent(currentSessionCode)}/export.csv`;
       }
+    });
+
+    // ==============================================================
+    // SIMULATION MODE CLIENT CONTROLLER WIREUP
+    // ==============================================================
+    window.simController = new HostSimulationController(socket);
+
+    // Global Mode Switcher
+    const classBtn = document.getElementById('switch-to-class-btn');
+    const simBtn = document.getElementById('switch-to-sim-btn');
+    const simBadge = document.getElementById('sim-active-indicator');
+
+    classBtn.addEventListener('click', () => {
+      classBtn.classList.add('selected');
+      simBtn.classList.remove('selected');
+      if (simBadge) simBadge.style.display = 'none';
+      document.getElementById('host-controls-tray').style.display = 'flex';
+      showView(currentSessionCode ? 'lobby-view' : 'setup-view');
+    });
+
+    simBtn.addEventListener('click', () => {
+      simBtn.classList.add('selected');
+      classBtn.classList.remove('selected');
+      if (simBadge) simBadge.style.display = 'inline-flex';
+      document.getElementById('host-controls-tray').style.display = 'none';
+      showView('sim-setup-view');
+    });
+
+    // Also link "practice-bots-link" to simulation setup
+    document.getElementById('practice-bots-link')?.addEventListener('click', () => {
+      simBtn.click();
+    });
+
+    // Setup Pills for Simulation Mode
+    setupPills('sim-tables-pills', val => window.simController.tableCount = parseInt(val, 10));
+    setupPills('sim-bots-pills', val => window.simController.playersPerTable = parseInt(val, 10));
+
+    // Preset pill descriptions
+    const presetDescMap = {
+      CHAOTIC: "High friction: mostly dominant & silent bots, low disclosure. Most tables fail.",
+      REALISTIC: "Balanced mix of styles, natural friction, 10–25% success rate as seen in live classrooms.",
+      SMOOTH: "High alignment: analytical & peacemaker bots, rapid disclosure. Most tables succeed.",
+      CUSTOM: "Custom configuration of tables, bots, and speed."
+    };
+
+    setupPills('sim-preset-pills', val => {
+      window.simController.scenario = val;
+      const descEl = document.getElementById('sim-preset-desc');
+      if (descEl) descEl.textContent = presetDescMap[val] || '';
+    });
+
+    // Randomise Seed Button
+    document.getElementById('sim-random-seed-btn')?.addEventListener('click', () => {
+      const randSeed = Math.floor(Math.random() * 90000) + 1000;
+      document.getElementById('sim-seed-input').value = randSeed;
+      window.simController.seed = randSeed;
+    });
+
+    document.getElementById('sim-seed-input')?.addEventListener('input', (e) => {
+      window.simController.seed = parseInt(e.target.value, 10) || 42;
+    });
+
+    // Speed Selector in Setup
+    document.querySelectorAll('#sim-speed-pills .sim-speed-pill').forEach(pill => {
+      pill.addEventListener('click', () => {
+        document.querySelectorAll('#sim-speed-pills .sim-speed-pill').forEach(p => p.classList.remove('selected'));
+        pill.classList.add('selected');
+        window.simController.speed = parseFloat(pill.getAttribute('data-speed'));
+      });
+    });
+
+    // Run Simulation Button
+    document.getElementById('sim-run-btn')?.addEventListener('click', () => {
+      window.simController.startSimulation();
+      if (simBadge) simBadge.style.display = 'inline-flex';
     });
   </script>
 </body>

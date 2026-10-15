@@ -2331,3 +2331,409 @@ body, button, input, select, textarea, .font-body {
   }
 }
 
+/* ---------------------------------------------------------
+   7. EXPERIENCE SIMULATION SYSTEM ("The Trip That Never Happened")
+   --------------------------------------------------------- */
+.sim-hero-banner {
+  background: var(--lavender, #d3c5fa);
+  border: 2px solid var(--ink, #101114);
+  border-radius: var(--r-card, 28px);
+  padding: 2.25rem 2rem;
+  box-shadow: 8px 8px 0px var(--blue, #3c6fff);
+  margin-top: 2.5rem;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.25s var(--ease-spring);
+}
+.sim-hero-banner:hover {
+  transform: translateY(-3px);
+}
+.sim-preview-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin: 1.25rem 0 1.5rem 0;
+}
+.sim-preview-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: #ffffff;
+  color: var(--ink);
+  border: 1.5px solid var(--ink);
+  border-radius: 99px;
+  padding: 0.4rem 0.95rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+.sim-badge-demo {
+  background: var(--sun, #f6ee6e);
+  color: var(--ink);
+  border: 1px solid var(--ink);
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 0.25rem 0.65rem;
+  border-radius: 99px;
+  display: inline-block;
+}
+
+/* Simulation View Layout */
+.sim-page-wrapper {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem 4rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Stage Progress Bar (Timeline) */
+.sim-timeline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  overflow-x: auto;
+  padding: 0.5rem 0.25rem 0.75rem 0.25rem;
+  scrollbar-width: none;
+}
+.sim-timeline::-webkit-scrollbar { display: none; }
+.sim-stage-step {
+  flex: 1;
+  min-width: 120px;
+  background: var(--paper);
+  border: 1.5px solid var(--border-color);
+  border-radius: 99px;
+  padding: 0.55rem 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  cursor: pointer;
+  transition: all 0.2s var(--ease-spring);
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--mute);
+  user-select: none;
+  white-space: nowrap;
+}
+.sim-stage-step:hover {
+  border-color: var(--ink);
+  color: var(--ink);
+  transform: translateY(-2px);
+}
+.sim-stage-step.active {
+  background: var(--ink);
+  color: #ffffff;
+  border-color: var(--ink);
+  box-shadow: 3px 3px 0px var(--blue);
+}
+.sim-stage-step.completed {
+  background: var(--sun);
+  color: var(--ink);
+  border-color: var(--ink);
+}
+.sim-stage-num {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.72rem;
+  background: rgba(0,0,0,0.1);
+}
+.sim-stage-step.active .sim-stage-num {
+  background: #ffffff;
+  color: var(--ink);
+}
+
+/* Controls Toolbar */
+.sim-controls-card {
+  background: #ffffff;
+  border: 1.5px solid var(--border-color);
+  border-radius: var(--r-card, 28px);
+  padding: 1rem 1.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.sim-btn-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.sim-ctrl-btn {
+  background: var(--paper);
+  color: var(--ink);
+  border: 1.5px solid var(--border-color);
+  border-radius: 99px;
+  padding: 0.5rem 1rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  transition: all 0.2s var(--ease-spring);
+}
+.sim-ctrl-btn:hover {
+  background: var(--ink);
+  color: #ffffff;
+  border-color: var(--ink);
+}
+.sim-ctrl-btn.active {
+  background: var(--ink);
+  color: #ffffff;
+  border-color: var(--ink);
+}
+
+/* Player Filter Chips */
+.sim-filter-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+.sim-filter-chip {
+  background: var(--paper);
+  border: 1px solid var(--border-color);
+  border-radius: 99px;
+  padding: 0.35rem 0.85rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--mute);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.sim-filter-chip:hover {
+  border-color: var(--ink);
+  color: var(--ink);
+}
+.sim-filter-chip.active {
+  background: var(--sun, #f6ee6e);
+  color: var(--ink);
+  border-color: var(--ink);
+  box-shadow: 2px 2px 0px var(--ink);
+}
+
+/* 5 Player Dock */
+.sim-players-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.85rem;
+}
+@media (max-width: 860px) {
+  .sim-players-grid {
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  }
+}
+.sim-player-card {
+  background: #ffffff;
+  border: 1.5px solid var(--border-color);
+  border-radius: 20px;
+  padding: 1rem 0.85rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  transition: all 0.25s var(--ease-spring);
+  position: relative;
+  cursor: pointer;
+}
+.sim-player-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--ink);
+}
+.sim-player-card.featured {
+  border: 2px solid var(--ink);
+  box-shadow: 4px 4px 0px var(--blue);
+  background: #ffffff;
+}
+.sim-player-card.dimmed {
+  opacity: 0.42;
+  filter: grayscale(40%);
+}
+.sim-player-avatar {
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  border: 1.5px solid var(--ink);
+  margin-bottom: 0.5rem;
+  overflow: hidden;
+  background: var(--paper);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.sim-player-name {
+  font-family: var(--font-serif);
+  font-size: 1.25rem;
+  line-height: 1.1;
+  color: var(--ink);
+  margin-bottom: 2px;
+}
+.sim-player-role-tag {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--mute);
+  margin-bottom: 0.5rem;
+}
+.sim-status-pill {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.2rem 0.5rem;
+  border-radius: 99px;
+  border: 1px solid var(--border-color);
+  background: var(--paper);
+  color: var(--ink);
+  width: 100%;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+/* Private Info Indicator Pill */
+.sim-private-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.68rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 0.2rem 0.6rem;
+  border-radius: 99px;
+  background: var(--sun, #f6ee6e);
+  color: var(--ink);
+  border: 1px solid var(--ink);
+  margin-top: 0.4rem;
+}
+
+/* Main Simulation Stage Canvas */
+.sim-stage-canvas {
+  background: #ffffff;
+  border: 2px solid var(--ink);
+  border-radius: var(--r-card, 28px);
+  padding: 2.25rem 2rem;
+  box-shadow: 8px 8px 0px var(--blue);
+  min-height: 480px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Chat simulation elements */
+.sim-chat-box {
+  background: var(--paper);
+  border: 1.5px solid var(--border-color);
+  border-radius: 20px;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  max-height: 380px;
+  overflow-y: auto;
+}
+.sim-chat-bubble {
+  max-width: 82%;
+  padding: 0.75rem 1.1rem;
+  border-radius: 20px;
+  font-size: 0.92rem;
+  line-height: 1.45;
+  position: relative;
+  animation: fadeIn 0.3s ease;
+}
+.sim-chat-bubble.incoming {
+  background: #ffffff;
+  color: var(--ink);
+  border: 1px solid var(--border-color);
+  align-self: flex-start;
+  border-bottom-left-radius: 6px;
+}
+.sim-chat-bubble.outgoing {
+  background: var(--ink);
+  color: #ffffff;
+  align-self: flex-end;
+  border-bottom-right-radius: 6px;
+}
+.sim-chat-bubble.system {
+  background: var(--sun);
+  color: var(--ink);
+  border: 1px solid var(--ink);
+  border-radius: 99px;
+  font-weight: 700;
+  font-size: 0.8rem;
+  align-self: center;
+  text-align: center;
+  padding: 0.4rem 1.25rem;
+}
+.sim-sender-tag {
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: var(--o);
+  margin-bottom: 2px;
+}
+
+/* Private Budget Card */
+.sim-private-card {
+  background: var(--paper);
+  border: 1.5px dashed var(--ink);
+  border-radius: 20px;
+  padding: 1.25rem;
+  margin-top: 1rem;
+}
+
+/* Itinerary Timeline */
+.sim-itinerary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+.sim-itinerary-card {
+  background: var(--paper);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.sim-itinerary-day-badge {
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--o);
+}
+
+/* Satisfaction Cards */
+.sim-sat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+.sim-sat-card {
+  background: var(--paper);
+  border: 1.5px solid var(--ink);
+  border-radius: 20px;
+  padding: 1.25rem 1rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.sim-sat-score {
+  font-family: var(--font-serif);
+  font-size: 2.2rem;
+  color: var(--g);
+  line-height: 1;
+  margin: 0.25rem 0;
+}
+
+

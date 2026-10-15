@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Experience Simulation &bull; The Trip That Never Happened</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,400..800;1,400..800&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    body {
+      background-color: var(--paper, #eef1f4);
+      color: var(--ink, #101114);
+      font-family: var(--font-sans, 'Hanken Grotesk', sans-serif);
+      -webkit-font-smoothing: antialiased;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="app-header">
+    <div style="display: flex; align-items: center; gap: 1rem;">
+      <a href="/" class="logo-badge" style="font-family: var(--font-serif); font-size: 1.4rem;">
+        <span>The Trip That Never Happened</span>
+      </a>
+      <span style="font-size: 0.8rem; font-weight: 800; text-transform: uppercase; background: var(--y); border: 1.5px solid var(--ink); border-radius: 99px; padding: 0.2rem 0.65rem; letter-spacing: 0.05em;">
+        Interactive Mock Demo
+      </span>
+    </div>
+    <div class="header-actions">
+      <a href="/" class="btn btn-secondary" style="font-size: 0.85rem; padding: 0.4rem 0.85rem; border-radius: 99px; text-decoration: none;">
+        ← Back to Home
+      </a>
+      <button class="theme-toggle-btn" id="theme-toggle" title="Toggle Dark/Light Mode">🌙</button>
+    </div>
+  </header>
+
+  <!-- Marquee Band -->
+  <div class="marquee-band">
+    <div class="marquee-track">
+      <span>✦ Interactive Experience Simulation</span>
+      <span>✦ 5 Friends &bull; Gokarna Coastal Escape</span>
+      <span>✦ Watch Budgets &amp; Preferences Collide</span>
+      <span>✦ 100% Client-Side Demo</span>
+      <span>✦ No Sign-Up Needed</span>
+      <span>✦ The Trip That Never Happened</span>
+      <span>✦ Interactive Experience Simulation</span>
+      <span>✦ 5 Friends &bull; Gokarna Coastal Escape</span>
+      <span>✦ Watch Budgets &amp; Preferences Collide</span>
+      <span>✦ 100% Client-Side Demo</span>
+      <span>✦ No Sign-Up Needed</span>
+      <span>✦ The Trip That Never Happened</span>
+    </div>
+  </div>
+
+  <main class="container" style="max-width: 1040px; padding-top: 1.5rem; padding-bottom: 4rem;">
+    <!-- Top Hero Banner / Context -->
+    <div class="sim-hero-banner">
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
+        <div>
+          <span class="kicker" style="color: var(--o); margin-bottom: 0.35rem;">
+            Simulation Mode &bull; Fictional Group Deliberation
+          </span>
+          <h1 style="font-size: clamp(32px, 4.5vw, 54px); margin-bottom: 0.5rem; line-height: 1.05;">
+            See How a Trip Comes Together
+          </h1>
+          <p style="color: var(--mute); font-size: 1.05rem; max-width: 700px; margin: 0; line-height: 1.5;">
+            Watch 5 friends navigate secret budgets, conflicting comfort levels, hidden anxieties, and trade-offs to pull off a 4-day coastal escape without breaking the group.
+          </p>
+        </div>
+        <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 0.4rem;">
+          <div style="display: flex; gap: 0.4rem; flex-wrap: wrap;">
+            <span class="pill pill-lavender" style="font-size: 0.8rem; font-weight: 700;">🏖️ Gokarna Coastal Escape</span>
+            <span class="pill pill-yellow" style="font-size: 0.8rem; font-weight: 700;">👥 5 Players</span>
+            <span class="pill pill-green" style="font-size: 0.8rem; font-weight: 700;">7 Stages</span>
+          </div>
+          <span style="font-size: 0.75rem; color: var(--mute); font-style: italic;">
+            Deterministic mock &bull; No login required
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 7-Stage Timeline Track -->
+    <div class="sim-timeline">
+      <div class="sim-timeline-track" id="sim-timeline-track">
+        <!-- Rendered dynamically by SimulationController -->
+      </div>
+    </div>
+
+    <!-- Playback & Filter Controls -->
+    <div class="sim-controls-card">
+      <!-- Left: Playback buttons -->
+      <div class="sim-controls-row">
+        <button id="sim-prev-btn" class="btn btn-secondary sim-ctrl-btn" title="Previous Stage" disabled>
+          ◀ Prev
+        </button>
+        <button id="sim-play-btn" class="btn btn-primary sim-ctrl-btn" title="Auto-advance stages">
+          <span>▶</span> Play
+        </button>
+        <button id="sim-next-btn" class="btn btn-secondary sim-ctrl-btn" title="Next Stage">
+          Next ▶
+        </button>
+        <button id="sim-restart-btn" class="btn btn-secondary sim-ctrl-btn" style="border-radius: 99px; font-size: 0.85rem;" title="Restart Simulation">
+          ↺ Restart
+        </button>
+
+        <div style="width: 1px; height: 26px; background: var(--border-color); margin: 0 0.5rem;"></div>
+
+        <!-- Speed Selector -->
+        <span style="font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: var(--mute);">Speed:</span>
+        <button class="sim-speed-btn active" data-speed="1">1x</button>
+        <button class="sim-speed-btn" data-speed="2">2x</button>
+      </div>
+
+      <!-- Right: Player Filter Chips -->
+      <div class="sim-controls-row">
+        <span style="font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: var(--mute);">Filter Player:</span>
+        <div class="sim-filter-chips">
+          <button class="sim-filter-chip active" data-filter="all">All</button>
+          <button class="sim-filter-chip" data-filter="aarav">Aarav</button>
+          <button class="sim-filter-chip" data-filter="maya">Maya</button>
+          <button class="sim-filter-chip" data-filter="riya">Riya</button>
+          <button class="sim-filter-chip" data-filter="kabir">Kabir</button>
+          <button class="sim-filter-chip" data-filter="ananya">Ananya</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5 Players Dock -->
+    <div style="margin-bottom: 0.6rem; display: flex; justify-content: space-between; align-items: flex-end;">
+      <div>
+        <span class="kicker" style="color: var(--o); margin-bottom: 0.2rem;">Live Player States</span>
+        <h3 style="font-size: 1.15rem; margin: 0;">The Travel Party (Click any player to focus)</h3>
+      </div>
+      <div style="display: flex; gap: 0.75rem; font-size: 0.75rem; font-weight: 700; color: var(--mute);">
+        <span>👁️ Group Chat</span>
+        <span>🔒 Secret Budget</span>
+        <span>⚖️ Compromise Metric</span>
+      </div>
+    </div>
+
+    <div class="sim-players-grid" id="sim-players-dock">
+      <!-- Rendered dynamically by SimulationController -->
+    </div>
+
+    <!-- Main Active Stage Canvas -->
+    <div class="sim-stage-canvas" style="margin-top: 1.75rem;">
+      <div class="window-titlebar-custom" style="margin: -2rem -2rem 1.5rem -2rem;">
+        <div class="window-dot-red"></div>
+        <span class="window-title-text" id="sim-window-tag">Interactive Simulation Stage View</span>
+      </div>
+
+      <!-- Stage Kicker & Title -->
+      <div style="margin-bottom: 1.5rem; border-bottom: 1px dashed var(--border-color); padding-bottom: 1rem;">
+        <span class="kicker" id="sim-stage-kicker" style="color: var(--o); margin-bottom: 0.25rem;">
+          01 &bull; Spontaneous Excitement
+        </span>
+        <h2 id="sim-stage-title" style="font-size: clamp(26px, 3.5vw, 40px); margin: 0 0 0.5rem 0;">
+          Stage 1 — The Idea
+        </h2>
+        <p id="sim-stage-subtext" style="color: var(--mute); font-size: 1rem; margin: 0; line-height: 1.5;">
+          The group decides to plan a long-weekend getaway. Initial excitement peaks, suggested destinations fly in, and early expectations start clashing.
+        </p>
+      </div>
+
+      <!-- Dynamic Stage Body -->
+      <div id="sim-stage-content">
+        <!-- Rendered by SIMULATION_STAGES[currentStageIndex - 1].render -->
+      </div>
+    </div>
+  </main>
+
+  <!-- Theme Toggle & Script Execution -->
+  <script src="/js/simulation.js"></script>
+  <script>
+    // Theme toggle
+    const themeBtn = document.getElementById('theme-toggle');
+    const currentTheme = localStorage.getItem('trip_theme') || 'light';
+    document.documentElement.setAttribute('data-theme', currentTheme);
+    themeBtn.textContent = currentTheme === 'dark' ? '☀️' : '🌙';
+
+    themeBtn.addEventListener('click', () => {
+      const active = document.documentElement.getAttribute('data-theme');
+      const next = active === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('trip_theme', next);
+      themeBtn.textContent = next === 'dark' ? '☀️' : '🌙';
+    });
+
+    // Initialize Simulation
+    window.addEventListener('DOMContentLoaded', () => {
+      if (typeof window.initSimulation === 'function') {
+        window.initSimulation();
+      }
+    });
+  </script>
+</body>
+</html>

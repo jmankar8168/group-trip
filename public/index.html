@@ -21,6 +21,12 @@
       gap: 2rem;
       margin-top: 2rem;
     }
+    @media (max-width: 768px) {
+      .sim-banner-grid {
+        grid-template-columns: 1fr !important;
+        gap: 1.5rem !important;
+      }
+    }
     .landing-card {
       background: #ffffff;
       border: 1px solid var(--border-color);
@@ -108,6 +114,97 @@
       <p style="font-size: 1.15rem; max-width: 640px; margin: 0 auto; color: var(--mute); line-height: 1.6;">
         A simultaneous multiplayer classroom simulation. Student groups attempt to agree on a group getaway under time pressure, each holding secret conflicting constraints.
       </p>
+    </div>
+
+    <!-- Experience Simulation Feature Entry Point -->
+    <div class="landing-simulation-banner" style="background: #ffffff; border: 2px solid var(--ink); border-radius: var(--r-card, 28px); padding: 2.25rem 2rem; margin-bottom: 2.5rem; position: relative; overflow: hidden; box-shadow: 6px 6px 0px var(--ink);">
+      <div class="window-titlebar-custom" style="margin: -2.25rem -2rem 1.5rem -2rem; background: var(--lavender, #d3c5fa);">
+        <div class="window-dot-red"></div>
+        <span class="window-title-text" style="color: var(--ink);">Interactive Mock Experience &bull; Instant Play</span>
+      </div>
+
+      <div class="sim-banner-grid" style="display: grid; grid-template-columns: 1.25fr 1fr; gap: 2rem; align-items: center;">
+        <div>
+          <span class="kicker" style="color: var(--o); margin-bottom: 0.4rem;">
+            Interactive Walkthrough &bull; No Account Needed
+          </span>
+          <h2 style="font-size: clamp(28px, 3.5vw, 42px); margin-bottom: 0.75rem; line-height: 1.1;">
+            See how a trip comes together.
+          </h2>
+          <p style="color: var(--mute); font-size: 1.05rem; line-height: 1.55; margin-bottom: 1.5rem;">
+            Watch a group of friends navigate budgets, preferences, compromises, and decisions to plan a trip together.
+          </p>
+
+          <!-- Preview Chips -->
+          <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.5rem;">
+            <span class="pill pill-lavender" style="font-size: 0.85rem; font-weight: 700;">🏖️ Gokarna Coastal Escape</span>
+            <span class="pill pill-yellow" style="font-size: 0.85rem; font-weight: 700;">👥 5 Friends</span>
+            <span class="pill pill-green" style="font-size: 0.85rem; font-weight: 700;">🧭 7 Interactive Stages</span>
+          </div>
+
+          <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
+            <a href="/simulation.html" class="btn btn-primary" style="border-radius: 99px; padding: 0.85rem 1.75rem; font-size: 1.05rem; font-weight: 800; text-decoration: none;">
+              Play the simulation &rarr;
+            </a>
+            <span style="font-size: 0.8rem; color: var(--mute); font-style: italic;">
+              * Demo with fictional players and decisions.
+            </span>
+          </div>
+        </div>
+
+        <!-- Visual Mini Preview of the 5 Players & Stage Flow -->
+        <div style="background: var(--paper); border: 1.5px solid var(--border-color); border-radius: 20px; padding: 1.25rem;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+            <span style="font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink);">
+              Fictional Characters
+            </span>
+            <span style="font-size: 0.75rem; background: var(--sun); border: 1px solid var(--ink); border-radius: 99px; padding: 0.15rem 0.5rem; font-weight: 700;">
+              Secret Constraints
+            </span>
+          </div>
+
+          <!-- Mini player avatars row -->
+          <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.4rem; text-align: center; margin-bottom: 1rem;">
+            <div style="background: #fff; border: 1px solid var(--border-color); border-radius: 12px; padding: 0.5rem 0.2rem;">
+              <div style="font-size: 1.25rem;">👓</div>
+              <div style="font-size: 0.75rem; font-weight: 700;">Aarav</div>
+              <div style="font-size: 0.65rem; color: var(--o); font-weight: 700;">Budget</div>
+            </div>
+            <div style="background: #fff; border: 1px solid var(--border-color); border-radius: 12px; padding: 0.5rem 0.2rem;">
+              <div style="font-size: 1.25rem;">🕶️</div>
+              <div style="font-size: 0.75rem; font-weight: 700;">Maya</div>
+              <div style="font-size: 0.65rem; color: var(--m); font-weight: 700;">Comfort</div>
+            </div>
+            <div style="background: #fff; border: 1px solid var(--border-color); border-radius: 12px; padding: 0.5rem 0.2rem;">
+              <div style="font-size: 1.25rem;">🤫</div>
+              <div style="font-size: 0.75rem; font-weight: 700;">Riya</div>
+              <div style="font-size: 0.65rem; color: var(--c); font-weight: 700;">Saver</div>
+            </div>
+            <div style="background: #fff; border: 1px solid var(--border-color); border-radius: 12px; padding: 0.5rem 0.2rem;">
+              <div style="font-size: 1.25rem;">🎒</div>
+              <div style="font-size: 0.75rem; font-weight: 700;">Kabir</div>
+              <div style="font-size: 0.65rem; color: var(--g); font-weight: 700;">Trekker</div>
+            </div>
+            <div style="background: #fff; border: 1px solid var(--border-color); border-radius: 12px; padding: 0.5rem 0.2rem;">
+              <div style="font-size: 1.25rem;">🤝</div>
+              <div style="font-size: 0.75rem; font-weight: 700;">Ananya</div>
+              <div style="font-size: 0.65rem; color: var(--blue); font-weight: 700;">Mediator</div>
+            </div>
+          </div>
+
+          <!-- Mini Step Progression Bar -->
+          <div style="border-top: 1px dashed var(--border-color); padding-top: 0.75rem;">
+            <div style="display: flex; justify-content: space-between; font-size: 0.7rem; font-weight: 700; color: var(--mute); margin-bottom: 0.35rem;">
+              <span>Stage 1: Idea</span>
+              <span>Stage 3: Secret Limits</span>
+              <span>Stage 7: Outcome</span>
+            </div>
+            <div style="width: 100%; height: 6px; background: var(--border-color); border-radius: 99px; overflow: hidden;">
+              <div style="width: 55%; height: 100%; background: var(--blue);"></div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- The 2 Clear Options -->
